@@ -6,6 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.audiofx.PresetReverb;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -24,6 +25,7 @@ public class Synth {
     private native void setOscPhase(int oscId, double offset);
     private native void setOscVoices(int oscId, int voices);
     private native void setOscSpread(int oscId, double spread);
+    private native void setOscReverb(int oscId, double reverb);
 
     // class variables
     int MAX_POINTERS = 10;
@@ -33,6 +35,7 @@ public class Synth {
     double spread = .07;
     int pointers = 0;
     double[][] pointerStates = new double[MAX_POINTERS][2];
+    double reverb = 0;
 
     int xres, yres;
     int xSegments = 4;
@@ -54,7 +57,6 @@ public class Synth {
         Random phaseGen = new Random();
         for (int i = 0; i < MAX_POINTERS; i++) {
             setOscSpread(i, spread);
-
             //setOscPhase(i, phaseGen.nextDouble());
         }
     }
@@ -108,13 +110,25 @@ public class Synth {
     }
 
     public void rotation(float x, float y, float z) {
-        voices = (int) Math.round(Math.abs(x) * MAX_VOICES);
+        voices = Math.round(Math.abs(z) * MAX_VOICES);
         setOscVoices();
+
+        double reverb_gate = .4;
+        reverb = Math.abs(y);
+        setOscReverb();
+
+        Log.d("Synth", "rotate" + "\nx "+ Math.abs(x) + "\ny " + Math.abs(y) + "\nz " + Math.abs(z));
     }
 
     private void setOscVoices() {
         for (int i = 0; i < MAX_POINTERS; i++) {
             setOscVoices(i, voices);
+        }
+    }
+
+    private void setOscReverb() {
+        for (int i = 0; i < MAX_POINTERS; i++) {
+            setOscReverb(i, reverb);
         }
     }
 

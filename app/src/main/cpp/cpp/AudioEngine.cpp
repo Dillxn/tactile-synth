@@ -12,7 +12,7 @@
 constexpr int32_t kBufferSizeInBursts = 4;
 
 aaudio_data_callback_result_t dataCallback(AAudioStream *stream, void *userData, void *audioData, int32_t numFrames) {
-    ((AudioMutator * ) (userData))->mutate(static_cast<float *>(audioData), numFrames);
+    ((AudioMutator * ) (userData))->mutate(audioData, numFrames);
     return AAUDIO_CALLBACK_RESULT_CONTINUE;
 }
 
@@ -68,6 +68,7 @@ bool AudioEngine::start() {
         return false;
     }
     AAudioStreamBuilder_delete(streamBuilder);
+
     return true;
 }
 
@@ -109,4 +110,8 @@ void AudioEngine::setOscVoices(int oscId, int voices) {
 
 void AudioEngine::setOscSpread(int oscId, double spread) {
     audioMutator.setOscSpread(oscId, spread);
+}
+
+void AudioEngine::setOscReverb(int oscId, double reverb) {
+    audioMutator.setOscReverb(oscId, reverb);
 }

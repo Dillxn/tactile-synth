@@ -5,18 +5,28 @@
 #include "AudioMutator.h"
 #include <android/log.h>
 
+AudioMutator::AudioMutator() {
+    mVerb.setParameter(MVerb<float>::PREDELAY, 0);
+}
+
 void AudioMutator::mutate(void *audioData, int32_t numFrames) {
     float *ad = static_cast<float *>(audioData);
     for (int i = 0; i < numFrames; i++) {
-        ad[i] = 0;
+        ad[i] = 0.f;
         // for all active oscillators
         for (int a = 0; a < MAX_OSCILLATORS; a++) {
-            ad[i] += oscillators_[a].render(i);
+            ad[i] += (float)oscillators_[a].render(i);
         }
 
         // adjust volume for osc count
-        ad[i] /= (float(oscCount_) / 2) + 1;
+        ad[i] /= oscCount_ + 1;
+    }
 
+    float reverb[(int)numFrames];
+    mVerb.process(ad, reverb, numFrames);
+
+    for (int i = 0; i < numFrames; i++) {
+        ad[i] += reverb[i] * reverbVolume_;
     }
 }
 
@@ -37,6 +47,7 @@ void AudioMutator::setSampleRate(int32_t rate) {
     for (int x = 0; x < MAX_OSCILLATORS; x++) {
         oscillators_[x].setSampleRate(rate);
     }
+    mVerb.setSampleRate(rate);
 }
 
 bool AudioMutator::isOscDown(int oscId) {
@@ -58,4 +69,9 @@ void AudioMutator::countOscillators() {
             tempOscCount++;
 
     oscCount_ = tempOscCount;
+}
+
+void AudioMutator::setOscReverb(int oscId, double reverb) {
+    mVerb.setParameter(MVerb<float>::DECAY, reverb);
+    reverbVolume_ = reverb;
 }

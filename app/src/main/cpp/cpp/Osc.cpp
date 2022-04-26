@@ -20,11 +20,10 @@ void Osc::setSampleRate(int32_t sampleRate) {
 void Osc::setWaveOn(bool isWaveOn) {
     if (isWaveOn) {
         oscStartTime_ = clock();
-        isWaveOn_.store(true);
-        pendingStop = false;
+        attack_sustain_release = 1;
     } else {
         oscStopTime_ = clock();
-        pendingStop = true;
+        attack_sustain_release = 3;
     }
 }
 
@@ -37,7 +36,7 @@ void Osc::setFrequency(double frequency) {
 float Osc::render(int frame) {
     float audioData = 0;
 
-    if (isWaveOn_.load()) {
+    if (attack_sustain_release != 0) {
         // calculate next sample value for wave
         audioData = (float) getWaveformData(waveform_, phase_);
 
@@ -55,22 +54,24 @@ float Osc::render(int frame) {
             double voicePhaseIncrement = voiceStates_[i][2];
             voiceStates_[i][1] = fmod(voicePhase + voicePhaseIncrement, TWO_PI);
         }
-        audioData /= (float(voices_) / 2) + 1;
+        audioData /= voices_ + 1;
 
         // adjust volume for attack
-        int uptime = (clock() - oscStartTime_);
-        if (uptime < envelope_[0]) {
-            audioData *= uptime / envelope_[0];
+        if (attack_sustain_release == 1) {
+            int uptime = (clock() - oscStartTime_);
+            audioData *= fmin(uptime / envelope_[0], 1);
+            if (uptime >= envelope_[0]) {
+                attack_sustain_release = 2;
+            }
         }
 
         // adjust volume for release
-        if (pendingStop) {
+        if (attack_sustain_release == 3) {
             int downTime = (clock() - oscStopTime_);
-            if (downTime < envelope_[3]) {
-                audioData *= 1 - (downTime / envelope_[3]);
-            } else {
-                isWaveOn_.store(false);
-                pendingStop = false;
+            float ratio = fmin(downTime / (envelope_[3] * .5), 1);
+            audioData *= 1 - ratio;
+            if (downTime >= envelope_[3]) {
+                attack_sustain_release = 0;
             }
         }
 
@@ -89,7 +90,7 @@ float Osc::getWaveformData(int waveformIndex, double phase) {
 }
 
 bool Osc::isWaveOn() {
-    return isWaveOn_.load() ? true : false;
+    return attack_sustain_release != 0;
 }
 
 void Osc::setPhase(double offset) {
@@ -97,7 +98,7 @@ void Osc::setPhase(double offset) {
 }
 
 void Osc::setVoices(int amount) {
-    voices_ = amount;
+    voices_ = fmin(amount, MAX_VOICES);
 }
 
 void Osc::setSpread(double amount) {

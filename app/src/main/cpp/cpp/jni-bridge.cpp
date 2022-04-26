@@ -48,3 +48,9 @@ Java_com_dillxn_tactilesynth_Synth_setOscSpread(JNIEnv *env, jobject thiz, jint 
                                                 jdouble spread) {
     audioEngine->setOscSpread(oscId, spread);
 }
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dillxn_tactilesynth_Synth_setOscReverb(JNIEnv *env, jobject thiz, jint oscId,
+                                                jdouble reverb) {
+    audioEngine->setOscReverb(oscId, reverb);
+}

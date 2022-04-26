@@ -23,6 +23,8 @@ public:
 
     void setOscSpread(int i, double d);
 
+    void setOscReverb(int oscId, double reverb);
+
 private:
     AAudioStream *stream_;
     AudioMutator audioMutator;

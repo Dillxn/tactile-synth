@@ -10,7 +10,7 @@
 #include <ctime>
 
 #define STANDARD_AMPLITUDE 0.3
-#define MAX_VOICES 16
+#define MAX_VOICES 32
 
 class Osc {
 public:
@@ -27,16 +27,15 @@ public:
     void setSpread(double spread);
 
 private:
-    std::atomic<bool> isWaveOn_{false};
     double phase_ = 0.0;
     double phaseIncrement_ = 0.0;
     double frequency_ = 440.0;
     double sampleRate_;
     int waveform_ = 1;
-    double envelope_[4] = {0, 1500, 1.0, 5000}; //adsr, measured in ms or percent of amplitude
+    double envelope_[4] = {2000, 1500, 1.0, 200000}; //adsr, measured in ms or percent of amplitude
     clock_t oscStartTime_ = clock();
     clock_t oscStopTime_ = clock();
-    bool pendingStop = false;
+    int attack_sustain_release = 0;
     double attackTime_ = 50;
     double releaseTime = 500;
     int voices_ = 7;
