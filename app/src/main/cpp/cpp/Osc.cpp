@@ -49,12 +49,14 @@ float Osc::render(int frame) {
         for (int i = start; i < end; i++) {
             // add waveform data
             double voicePhase = voiceStates_[i][1];
-            audioData += getWaveformData(waveform_, voicePhase);
+            audioData += getWaveformData(waveform_, voicePhase) * voicesVolume_;
             // increment phase
             double voicePhaseIncrement = voiceStates_[i][2];
             voiceStates_[i][1] = fmod(voicePhase + voicePhaseIncrement, TWO_PI);
         }
-        audioData /= voices_ + 1;
+
+        audioData /= MAX_VOICES + 1;
+
 
         // adjust volume for attack
         if (attack_sustain_release == 1) {
@@ -134,4 +136,12 @@ void Osc::tuneVoices() {
 // get phase increment given frequency
 double Osc::getPhaseIncrement(double frequency) {
     return (TWO_PI * frequency) / sampleRate_;
+}
+
+void Osc::setVoicesVolume(double volume) {
+    voicesVolume_ = volume;
+}
+
+void Osc::setVolume(double volume) {
+    volume_ = volume;
 }

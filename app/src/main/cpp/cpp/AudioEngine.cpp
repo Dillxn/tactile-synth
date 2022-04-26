@@ -115,3 +115,11 @@ void AudioEngine::setOscSpread(int oscId, double spread) {
 void AudioEngine::setOscReverb(int oscId, double reverb) {
     audioMutator.setOscReverb(oscId, reverb);
 }
+
+void AudioEngine::setOscVoicesVolume(int oscId, double volume) {
+    audioMutator.setOscVoicesVolume(oscId, volume);
+}
+
+void AudioEngine::setOscVolume(int oscId, double volume) {
+    audioMutator.setOscVolume(oscId, volume);
+}

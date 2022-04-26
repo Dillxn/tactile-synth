@@ -25,6 +25,10 @@ public:
 
     void setOscReverb(int oscId, double reverb);
 
+    void setOscVoicesVolume(int oscId, double volume);
+
+    void setOscVolume(int oscId, double volume);
+
 private:
     AAudioStream *stream_;
     AudioMutator audioMutator;

@@ -32,6 +32,10 @@ public:
 
     void setOscReverb(int oscId, double reverb);
 
+    void setOscVoicesVolume(int oscId, double volume);
+
+    void setOscVolume(int oscId, double volume);
+
 private:
     Osc oscillators_[MAX_OSCILLATORS];
     int oscCount_;
@@ -40,6 +44,8 @@ private:
     double reverbVolume_;
 
     void countOscillators();
+
+    double compressorThreshold_ = .3;
 };
 
 
