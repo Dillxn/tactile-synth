@@ -33,8 +33,7 @@ void AudioMutator::mutate(void *audioData, int32_t numFrames) {
 
 
         /// compress
-        ad[i] = ad[i] > 0 ? pow(ad[i], .4) : 0;
-
+        ad[i] = pow(ad[i], .5);
 
 
         /// lowpass
@@ -50,14 +49,12 @@ void AudioMutator::mutate(void *audioData, int32_t numFrames) {
 
 
         // hard clipper
-        if (false) {
-            if (ad[i] > clipperThreshold_) {
-                ad[i] = clipperThreshold_;
-            }
-
-            // normalize for clipping
-            ad[i] *= 1 / clipperThreshold_;
+        if (ad[i] > clipperThreshold_) {
+            ad[i] = clipperThreshold_;
         }
+
+        // normalize for clipping
+        ad[i] *= 1 / clipperThreshold_;
 
     }
 

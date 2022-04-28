@@ -67,7 +67,6 @@ public class MainActivity extends Activity implements SensorEventListener {
                 mediaPlayer.setLooping(true);
             }
         });
-        textView = findViewById(R.id.textView);
 
         // get display res
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -134,7 +133,6 @@ public class MainActivity extends Activity implements SensorEventListener {
                 if (x > maxX) maxX = x;
                 if (y > maxY) maxY = y;
                 if (z > maxZ) maxZ = z;
-                textView.setText("x "+ Float.toString(x) + "\nmax x: " + maxX + "\ny " + Float.toString(y) + "\nmax y: " + maxY + "\nz " + Float.toString(z) + "\nmax z: " + maxZ );
                 synth.rotation(x, y, z);
 
                 break;

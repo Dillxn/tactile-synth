@@ -58,7 +58,7 @@ private:
 
     void countOscillators();
 
-    double clipperThreshold_ = .99;
+    double clipperThreshold_ = .5;
     float lowPassAmount_ = 0;
     float highPassAmount_ = 0;
 };
