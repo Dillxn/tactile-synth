@@ -5,7 +5,7 @@
 #ifndef TACTILESYNTH_AUDIOMUTATOR_H
 #define TACTILESYNTH_AUDIOMUTATOR_H
 
-#define MAX_OSCILLATORS 10
+#define MAX_OSCILLATORS 5
 #define MAX_FREQUENCY 20000
 
 #include "Osc.h"
@@ -59,6 +59,8 @@ private:
     void countOscillators();
 
     double clipperThreshold_ = .99;
+    float lowPassAmount_ = 0;
+    float highPassAmount_ = 0;
 };
 
 

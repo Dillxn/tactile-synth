@@ -10,7 +10,7 @@
 #include <ctime>
 
 #define STANDARD_AMPLITUDE 0.3
-#define MAX_VOICES 16
+#define MAX_VOICES 7
 
 class Osc {
 public:

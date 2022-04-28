@@ -32,7 +32,7 @@ public class Synth {
     private native void setOscAttack(int oscId, double amount);
 
     // class variables
-    int MAX_POINTERS = 10;
+    int MAX_POINTERS = 5;
     double MAX_SPREAD = .4;
     int pointers = 0;
     int voicesCount = 0;

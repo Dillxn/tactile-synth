@@ -46,6 +46,7 @@ float Osc::render(int frame) {
         int start = maxMid - currentMid;
         int end = maxMid + currentMid;
 
+
         for (int i = start; i < end; i++) {
             // add waveform data
             double voicePhase = voiceStates_[i][1];
@@ -55,7 +56,7 @@ float Osc::render(int frame) {
             voiceStates_[i][1] = fmod(voicePhase + voicePhaseIncrement, TWO_PI);
         }
 
-        audioData /= MAX_VOICES + 1;
+        audioData /= MAX_VOICES;
 
 
         // adjust volume for attack

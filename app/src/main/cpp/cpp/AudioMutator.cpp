@@ -19,32 +19,30 @@ void AudioMutator::mutate(void *audioData, int32_t numFrames) {
     for (int i = 0; i < numFrames; i++) {
         ad[i] = 0.f;
 
-        // oscillators
+        /// oscillators
         for (int a = 0; a < MAX_OSCILLATORS; a++) {
             ad[i] += (float)oscillators_[a].render(i);
         }
-        // adjust volume for osc count
         ad[i] /= MAX_OSCILLATORS;
 
 
-        // lowpass
-        ad[i] = lowPassFilter(ad[i]);
+        /// bit crusher
+        if (bitCrushMix_ > .5) {
+            //ad[i] = floor(ad[i] * (float)multiplier) / (float)multiplier;
+        }
 
-        // highpass
+        /// compress
+        ad[i] = ad[i] > 0 ? (float)((pow(ad[i], .4))) : 0;
+
+        /// lowpass
+        //lowPassFilter.Resonance(lowPassAmount_ * .1);
+        ad[i] = lowPassFilter(ad[i]);
+        /// highpass
         ad[i] = highPassFilter(ad[i]);
 
-
-
-        // bit crusher
-        //if (bitCrushMix_ > .5)
-            //ad[i] = floor(ad[i] * (float)multiplier) / (float)multiplier;
-
-
-        // compress
-        ad[i] = ad[i] > 0 ? (float)((pow(ad[i], .6))) : 0;
-
-        // reverb
+        /// reverb
         ad[i] += mVerb.process(ad[i], numFrames, reverbVolume_);
+
 
         // hard clipper
         if (false) {
@@ -126,10 +124,11 @@ void AudioMutator::setBitCrush(double amount) {
 }
 
 void AudioMutator::setFilter(double amount) {
-
-    lowPassFrequency_ = MAX_FREQUENCY - (pow(fmax(amount, 0),.2) * MAX_FREQUENCY);
+    lowPassAmount_ = fmax((amount), 0);
+    lowPassFrequency_ = MAX_FREQUENCY - (pow(lowPassAmount_,.2) * MAX_FREQUENCY);
     lowPassFilter.Frequency(lowPassFrequency_);
 
-    highPassFrequency_ = (float)pow(abs(fmin(amount,0)),2) * MAX_FREQUENCY;
+    highPassAmount_ = abs(fmin(amount,0));
+    highPassFrequency_ = pow(highPassAmount_, 5) * MAX_FREQUENCY;
     highPassFilter.Frequency(highPassFrequency_);
 }
