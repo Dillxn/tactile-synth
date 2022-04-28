@@ -31,17 +31,22 @@ void AudioMutator::mutate(void *audioData, int32_t numFrames) {
             //ad[i] = floor(ad[i] * (float)multiplier) / (float)multiplier;
         }
 
+
         /// compress
-        ad[i] = ad[i] > 0 ? (float)((pow(ad[i], .4))) : 0;
+        ad[i] = ad[i] > 0 ? pow(ad[i], .4) : 0;
+
+
 
         /// lowpass
-        //lowPassFilter.Resonance(lowPassAmount_ * .1);
+        lowPassFilter.Resonance(pow(lowPassAmount_, .4) * .9);
         ad[i] = lowPassFilter(ad[i]);
         /// highpass
         ad[i] = highPassFilter(ad[i]);
 
         /// reverb
-        ad[i] += mVerb.process(ad[i], numFrames, reverbVolume_);
+        float reverbFrame = mVerb.process(ad[i], numFrames, reverbVolume_);
+        ad[i] += reverbFrame;
+        ad[i] /= 2;
 
 
         // hard clipper

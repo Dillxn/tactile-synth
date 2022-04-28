@@ -85,7 +85,7 @@ public:
     }
 
     float process(T input, int sampleFrames, float inputAmplitude){
-        Mix = inputAmplitude / 2;
+        Decay = inputAmplitude / 2 + .5;
         T OneOverSampleFrames = 1. / sampleFrames;
         T MixDelta	= (Mix - MixSmooth) * OneOverSampleFrames;
         T EarlyLateDelta = (EarlyMix - EarlyLateSmooth) * OneOverSampleFrames;
@@ -97,7 +97,7 @@ public:
         T DensityDelta = (((0.7995f * Density1) + 0.005) - DensitySmooth) * OneOverSampleFrames;
 
         // begin
-            T left = input;
+            T left = input * inputAmplitude;
             T right = left;
             MixSmooth += MixDelta;
             EarlyLateSmooth += EarlyLateDelta;
