@@ -6,6 +6,7 @@
 #define TACTILESYNTH_AUDIOMUTATOR_H
 
 #define MAX_OSCILLATORS 10
+#define MAX_FREQUENCY 20000
 
 #include "Osc.h"
 #include "MVerb.h"
@@ -30,22 +31,34 @@ public:
 
     void setOscSpread(int oscId, double spread);
 
-    void setOscReverb(int oscId, double reverb);
+    void setReverb(double reverb);
 
     void setOscVoicesVolume(int oscId, double volume);
 
     void setOscVolume(int oscId, double volume);
+
+    void setOscAttack(int oscId, double amount);
+
+    void setBitCrush(double amount);
+
+    void setFilter(double amount);
 
 private:
     Osc oscillators_[MAX_OSCILLATORS];
     int oscCount_;
 
     MVerb<float> mVerb;
-    double reverbVolume_;
+    float reverbVolume_;
+    float bitCrushMix_;
+    float lowPassFrequency_;
+    float highPassFrequency_;
+
+    StateVariable<float, 4> lowPassFilter;
+    StateVariable<float, 4> highPassFilter;
 
     void countOscillators();
 
-    double compressorThreshold_ = .3;
+    double clipperThreshold_ = .99;
 };
 
 

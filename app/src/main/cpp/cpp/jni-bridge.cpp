@@ -50,9 +50,9 @@ Java_com_dillxn_tactilesynth_Synth_setOscSpread(JNIEnv *env, jobject thiz, jint 
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_dillxn_tactilesynth_Synth_setOscReverb(JNIEnv *env, jobject thiz, jint oscId,
-                                                jdouble reverb) {
-    audioEngine->setOscReverb(oscId, reverb);
+Java_com_dillxn_tactilesynth_Synth_setReverb(JNIEnv *env, jobject thiz,
+                                             jdouble reverb) {
+    audioEngine->setReverb(reverb);
 }
 extern "C"
 JNIEXPORT void JNICALL
@@ -65,4 +65,20 @@ JNIEXPORT void JNICALL
 Java_com_dillxn_tactilesynth_Synth_setOscVolume(JNIEnv *env, jobject thiz, jint oscId,
                                                 jdouble volume) {
     audioEngine->setOscVolume(oscId, volume);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dillxn_tactilesynth_Synth_setOscAttack(JNIEnv *env, jobject thiz, jint oscId,
+                                                jdouble amount) {
+    audioEngine->setOscAttack(oscId, amount);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dillxn_tactilesynth_Synth_setBitCrush(JNIEnv *env, jobject thiz, jdouble amount) {
+    audioEngine->setBitCrush(amount);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dillxn_tactilesynth_Synth_setFilter(JNIEnv *env, jobject thiz, jdouble amount) {
+    audioEngine->setFilter(amount);
 }

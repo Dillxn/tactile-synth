@@ -84,7 +84,7 @@ public:
         //nowt to do here
     }
 
-    void process(T *inputs, T *outputs, int sampleFrames){
+    float process(T input, int sampleFrames, float inputAmplitude){
         T OneOverSampleFrames = 1. / sampleFrames;
         T MixDelta	= (Mix - MixSmooth) * OneOverSampleFrames;
         T EarlyLateDelta = (EarlyMix - EarlyLateSmooth) * OneOverSampleFrames;
@@ -94,9 +94,10 @@ public:
         T SizeDelta	= (Size - SizeSmooth) * OneOverSampleFrames;
         T DecayDelta = (((0.7995f * Decay) + 0.005) - DecaySmooth) * OneOverSampleFrames;
         T DensityDelta = (((0.7995f * Density1) + 0.005) - DensitySmooth) * OneOverSampleFrames;
-        for(int i=0;i<sampleFrames;++i){
-            T left = inputs[i];
-            T right = inputs[i];
+
+        // begin
+            T left = input * inputAmplitude;
+            T right = left;
             MixSmooth += MixDelta;
             EarlyLateSmooth += EarlyLateDelta;
             BandwidthSmooth += BandwidthDelta;
@@ -175,9 +176,10 @@ public:
             accumulatorR = ((accumulatorR * EarlyMix) + ((1 - EarlyMix) * earlyReflectionsR));
             left = ( left + MixSmooth * ( accumulatorL - left ) ) * Gain;
             right = ( right + MixSmooth * ( accumulatorR - right ) ) * Gain;
-            outputs[i] = left;
-            outputs[i] = right;
-        }
+
+
+            return (left + right) *.5f;
+
     }
 
     void reset(){

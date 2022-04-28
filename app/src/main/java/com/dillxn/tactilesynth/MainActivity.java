@@ -18,6 +18,8 @@ import android.widget.TextView;
 import android.view.MotionEvent;
 import android.widget.VideoView;
 
+import java.text.DecimalFormat;
+
 
 public class MainActivity extends Activity implements SensorEventListener {
 
@@ -40,6 +42,11 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     VideoView background;
 
+    TextView textView;
+    float maxX = 0;
+    float maxY = 0;
+    float maxZ = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +67,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                 mediaPlayer.setLooping(true);
             }
         });
+        textView = findViewById(R.id.textView);
 
         // get display res
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -119,7 +127,15 @@ public class MainActivity extends Activity implements SensorEventListener {
         Sensor sensor = event.sensor;
         switch (sensor.getType()) {
             case Sensor.TYPE_GAME_ROTATION_VECTOR: {
-                synth.rotation(event.values[0], event.values[1], event.values[2]);
+                updateOrientationAngles();
+                float x = (float) (orientationAngles[0] / Math.PI);
+                float y = (float) (orientationAngles[1] * 2 / Math.PI);
+                float z = (float) (orientationAngles[2] / Math.PI);
+                if (x > maxX) maxX = x;
+                if (y > maxY) maxY = y;
+                if (z > maxZ) maxZ = z;
+                textView.setText("x "+ Float.toString(x) + "\nmax x: " + maxX + "\ny " + Float.toString(y) + "\nmax y: " + maxY + "\nz " + Float.toString(z) + "\nmax z: " + maxZ );
+                synth.rotation(x, y, z);
 
                 break;
             }
@@ -136,9 +152,15 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
     }
 
+    // compute the three orientation angles based on the most recent
+    // readings from the device's accelerometer and magnetometer.
     public void updateOrientationAngles() {
+        // update rotation matrix
         SensorManager.getRotationMatrix(rotationMatrix, null,
                 accelerometerReading, magnetometerReading);
+        // local coordinates
+        //SensorManager.remapCoordinateSystem(rotationMatrix, SensorManager.AXIS_X, )
+        // use matrix to get orientation angles
         SensorManager.getOrientation(rotationMatrix, orientationAngles);
     }
 

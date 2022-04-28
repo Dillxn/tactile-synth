@@ -61,7 +61,9 @@ float Osc::render(int frame) {
         // adjust volume for attack
         if (attack_sustain_release == 1) {
             int uptime = (clock() - oscStartTime_);
-            audioData *= fmin(uptime / envelope_[0], 1);
+            float uptimeRatio = uptime / envelope_[0];
+            float multiplier = uptimeRatio + (currentAmp * (1 - uptimeRatio));
+            audioData *= fmin(multiplier, 1);
             if (uptime >= envelope_[0]) {
                 attack_sustain_release = 2;
             }
@@ -77,7 +79,7 @@ float Osc::render(int frame) {
             }
         }
 
-        amplitude_ = 1;
+        currentAmp = audioData;
 
         // increment phase
         phase_ = fmod((phase_ + phaseIncrement_), TWO_PI);
@@ -144,4 +146,8 @@ void Osc::setVoicesVolume(double volume) {
 
 void Osc::setVolume(double volume) {
     volume_ = volume;
+}
+
+void Osc::setAttack(double amount) {
+    envelope_[0] = amount * MAX_ATTACK;
 }

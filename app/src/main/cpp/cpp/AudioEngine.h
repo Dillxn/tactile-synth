@@ -23,11 +23,17 @@ public:
 
     void setOscSpread(int i, double d);
 
-    void setOscReverb(int oscId, double reverb);
+    void setReverb(double reverb);
 
     void setOscVoicesVolume(int oscId, double volume);
 
     void setOscVolume(int oscId, double volume);
+
+    void setOscAttack(int oscId, double amount);
+
+    void setBitCrush(double amount);
+
+    void setFilter(double amount);
 
 private:
     AAudioStream *stream_;

@@ -25,20 +25,27 @@ public class Synth {
     private native void setOscVoices(int oscId, int voices);
     private native void setOscVoicesVolume(int oscId, double volume);
     private native void setOscSpread(int oscId, double spread);
-    private native void setOscReverb(int oscId, double reverb);
+    private native void setReverb(double reverb);
+    private native void setBitCrush(double amount);
+    private native void setFilter(double amount);
     private native void setOscVolume(int oscId, double volume);
+    private native void setOscAttack(int oscId, double amount);
 
     // class variables
     int MAX_POINTERS = 10;
     double MAX_SPREAD = .4;
-    int voices = 0;
-    double spread = .07;
     int pointers = 0;
+    int voicesCount = 0;
+    double spread = .07;
+    double voices = 0;
+    double reverb = 0;
+    double filter = 0;
+    double bitCrush = 0;
     double[][] pointerStates = new double[MAX_POINTERS][2];
 
     int xres, yres;
     int xSegments = 4;
-    int ySegments = 7;
+    int ySegments = 11;
 
     double[] scale = {
             38.89,
@@ -55,7 +62,6 @@ public class Synth {
         this.yres = yres;
         Random phaseGen = new Random();
         for (int i = 0; i < MAX_POINTERS; i++) {
-            setOscSpread(i, spread);
             //setOscPhase(i, phaseGen.nextDouble());
         }
     }
@@ -109,16 +115,20 @@ public class Synth {
     }
 
     public void rotation(float x, float y, float z) {
+        //filter = ((1 - ((x % 2) + 2) % 2) + 1) / 2;
+        voices = Math.abs(x);
+        filter = z;
+        reverb = Math.abs(Math.min(y, 0));
+        bitCrush = Math.max(y, 0);
+
+        setReverb(reverb);
+        setBitCrush(bitCrush);
+        setFilter(filter);
 
         for (int i = 0; i < MAX_POINTERS; i++) {
-            setOscVoicesVolume(i, Math.abs(z));
+            setOscVoicesVolume(i, voices);
         }
 
-        for (int i = 0; i < MAX_POINTERS; i++) {
-            setOscReverb(i, Math.abs(y));
-        }
-
-        //Log.d("Synth", "rotate" + "\nx "+ Math.abs(x) + "\ny " + Math.abs(y) + "\nz " + Math.abs(z));
     }
 
     private int[] getNoteFromXY(float x, float y) {

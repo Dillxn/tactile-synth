@@ -112,8 +112,8 @@ void AudioEngine::setOscSpread(int oscId, double spread) {
     audioMutator.setOscSpread(oscId, spread);
 }
 
-void AudioEngine::setOscReverb(int oscId, double reverb) {
-    audioMutator.setOscReverb(oscId, reverb);
+void AudioEngine::setReverb(double reverb) {
+    audioMutator.setReverb(reverb);
 }
 
 void AudioEngine::setOscVoicesVolume(int oscId, double volume) {
@@ -122,4 +122,16 @@ void AudioEngine::setOscVoicesVolume(int oscId, double volume) {
 
 void AudioEngine::setOscVolume(int oscId, double volume) {
     audioMutator.setOscVolume(oscId, volume);
+}
+
+void AudioEngine::setOscAttack(int oscId, double amount) {
+    audioMutator.setOscAttack(oscId, amount);
+}
+
+void AudioEngine::setBitCrush(double amount) {
+    audioMutator.setBitCrush(amount);
+}
+
+void AudioEngine::setFilter(double amount) {
+    audioMutator.setFilter(amount);
 }
