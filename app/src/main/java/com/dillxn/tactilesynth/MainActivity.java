@@ -31,6 +31,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     private native void stopEngine();
 
     Synth synth;
+    Database db;
 
     // class variables
     private SensorManager sensorManager;
@@ -51,6 +52,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        db = new Database(this);
         // set up UI
         setContentView(R.layout.activity_main);
         // make fullscreen
@@ -75,7 +77,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         int yres = displayMetrics.heightPixels;
 
         // Init synth
-        this.synth = new Synth(xres, yres);
+        this.synth = new Synth(xres, yres, db);
 
         // start sensor listening
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
