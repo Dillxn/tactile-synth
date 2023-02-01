@@ -23,14 +23,11 @@ public class Database {
         this.context = context;
         this.dbFile = new File(this.context.getFilesDir(), fileName);
 
-        // check if it exists
-        if (!dbFile.exists()) {
-            // if it doesn't, create it
-            System.out.println("Local Storage Database file does not exist, creating...");
-            create();
-        }
-
-        // load it
+        // todo: determine how and when the default db should
+        //      overwrite the internal storage db
+        // currently: it always overwrites
+        create();
+            
         load();
     }
 
