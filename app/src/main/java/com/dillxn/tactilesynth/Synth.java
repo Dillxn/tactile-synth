@@ -9,8 +9,10 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.widget.EditText;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Random;
@@ -165,4 +167,12 @@ public class Synth {
         return new int[]{relativeNoteIndex, relativeOctave};
     }
 
+    /* JOSH - THIS IS ONLY USED TO POPULATE THE FREQUENCY UI ELEMENTS.
+     *  IT CAN BE MOVED TO THE MAIN ACTIVITY INSTEAD OF BEING A SYNTH METHOD. */
+    public Double getNoteFrequency(int note) {
+        int noteIndex = note;
+
+        JSONArray frequencies = db.getPreset().optJSONArray("frequencies");
+        return frequencies.optDouble(noteIndex);
+    }
 }
