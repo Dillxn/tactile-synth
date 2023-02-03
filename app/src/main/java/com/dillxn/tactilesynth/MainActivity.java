@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.view.MotionEvent;
 import android.widget.VideoView;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 
 
@@ -53,6 +54,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         super.onCreate(savedInstanceState);
 
         db = new Database(this);
+
         // set up UI
         setContentView(R.layout.activity_main);
         // make fullscreen
