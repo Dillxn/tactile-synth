@@ -15,6 +15,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.view.MotionEvent;
@@ -192,15 +193,14 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     /*  JOSH - GRABS UI FREQUENCY ELEMENTS */
     public EditText[] getFreqUI(){
-        EditText freqs[] = {
-                (EditText) findViewById(R.id.freq1),
-                (EditText) findViewById(R.id.freq2),
-                (EditText) findViewById(R.id.freq3),
-                (EditText) findViewById(R.id.freq4),
-                (EditText) findViewById(R.id.freq5),
-                (EditText) findViewById(R.id.freq6),
-                (EditText) findViewById(R.id.freq7)};
-        return freqs;
+        return new EditText[]{
+                findViewById(R.id.freq1),
+                findViewById(R.id.freq2),
+                findViewById(R.id.freq3),
+                findViewById(R.id.freq4),
+                findViewById(R.id.freq5),
+                findViewById(R.id.freq6),
+                findViewById(R.id.freq7)};
     }
 
     /*  JOSH - WRITES FREQUENCIES FOUND IN RUNNING MODEL TO UI */
@@ -222,5 +222,23 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
 
         db.getPreset().put("frequencies", freqs);
+    }
+
+    public void menuToggle(View layout){
+        EditText[] freqsUI = getFreqUI();
+        Button setFreqButton = findViewById(R.id.setFreqBtn);
+
+        if(setFreqButton.getVisibility() == View.VISIBLE){
+            setFreqButton.setVisibility(View.INVISIBLE);
+            for (EditText box:freqsUI) {
+                box.setVisibility(View.INVISIBLE);
+            }
+        }
+        else {
+            setFreqButton.setVisibility(View.VISIBLE);
+            for (EditText box:freqsUI) {
+                box.setVisibility(View.VISIBLE);
+            }
+        }
     }
 }

@@ -5,17 +5,21 @@
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#2D2F31"
+    android:backgroundTint="#2D2F31"
     tools:context=".MainActivity">
 
     <VideoView
         android:id="@+id/background"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="703dp"
+        android:layout_below="@id/constraintLayout"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_below="@id/constraintLayout"/>
+        android:layout_marginTop="28dp"
+        android:layout_marginRight="0dp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -46,6 +50,7 @@
             android:ems="10"
             android:inputType="numberDecimal"
             android:text="1"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/freq2"
             app:layout_constraintStart_toStartOf="@+id/touchpad"
             app:layout_constraintTop_toBottomOf="@+id/setFreqBtn"
@@ -60,6 +65,7 @@
             android:ems="10"
             android:inputType="numberDecimal"
             android:text="1"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/freq3"
             app:layout_constraintStart_toStartOf="@+id/touchpad"
             app:layout_constraintTop_toBottomOf="@+id/freq1" />
@@ -73,6 +79,7 @@
             android:ems="10"
             android:inputType="numberDecimal"
             android:text="1"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/freq4"
             app:layout_constraintStart_toStartOf="@+id/touchpad"
             app:layout_constraintTop_toBottomOf="@+id/freq2" />
@@ -86,6 +93,7 @@
             android:ems="10"
             android:inputType="numberDecimal"
             android:text="1"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/freq5"
             app:layout_constraintStart_toStartOf="@+id/touchpad"
             app:layout_constraintTop_toBottomOf="@+id/freq3" />
@@ -99,6 +107,7 @@
             android:ems="10"
             android:inputType="numberDecimal"
             android:text="1"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/freq6"
             app:layout_constraintStart_toStartOf="@+id/touchpad"
             app:layout_constraintTop_toBottomOf="@+id/freq4" />
@@ -112,6 +121,7 @@
             android:ems="10"
             android:inputType="numberDecimal"
             android:text="1"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/freq7"
             app:layout_constraintStart_toStartOf="@+id/touchpad"
             app:layout_constraintTop_toBottomOf="@+id/freq5" />
@@ -125,6 +135,7 @@
             android:ems="10"
             android:inputType="numberDecimal"
             android:text="1"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/touchpad"
             app:layout_constraintStart_toStartOf="@+id/touchpad"
             app:layout_constraintTop_toBottomOf="@+id/freq6" />
@@ -136,9 +147,19 @@
             android:layout_marginStart="16dp"
             android:onClick="setFreqs"
             android:text="Set"
+            android:visibility="invisible"
             app:iconPadding="6dp"
             app:layout_constraintBottom_toTopOf="@+id/freq1"
             app:layout_constraintStart_toStartOf="@+id/touchpad"
             app:layout_constraintTop_toBottomOf="@+id/touchpad" />
+
+        <Button
+            android:id="@+id/menuToggle"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:onClick="menuToggle"
+            android:text="Button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>
