@@ -141,6 +141,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         Sensor sensor = event.sensor;
+
         switch (sensor.getType()) {
             case Sensor.TYPE_GAME_ROTATION_VECTOR: {
                 updateOrientationAngles();
@@ -151,7 +152,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                 if (y > maxY) maxY = y;
                 if (z > maxZ) maxZ = z;
                 synth.rotation(x, y, z);
-
+                setRotationUI(x, y, z);
                 break;
             }
             case Sensor.TYPE_ACCELEROMETER: {
@@ -225,9 +226,19 @@ public class MainActivity extends Activity implements SensorEventListener {
         db.getPreset().put("frequencies", freqs);
     }
 
+    /* JOSH - POPULATES ROTATION VALUES FOUND IN THE DEBUG UI */
+    public void setRotationUI(float x, float y, float z){
+        TextView xRotation = findViewById(R.id.xRotation);
+        TextView yRotation = findViewById(R.id.yRotation);
+        TextView zRotation = findViewById(R.id.zRotation);
+
+        xRotation.setText("X_ROTATION: " + String.valueOf(x));
+        yRotation.setText("Y_ROTATION: " + String.valueOf(y));
+        zRotation.setText("Z_ROTATION: " + String.valueOf(z));
+    }
+
+    /* JOSH - ENABLES AND DISABLES THE DEBUG UI */
     public void menuToggle(View layout){
-        EditText[] freqsUI = getFreqUI();
-        Button setFreqButton = findViewById(R.id.setFreqBtn);
         ConstraintLayout debugUI = findViewById(R.id.debugUI);
 
         if(debugUI.getVisibility() == View.VISIBLE){
