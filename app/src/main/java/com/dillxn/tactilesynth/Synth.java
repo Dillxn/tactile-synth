@@ -9,6 +9,11 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.widget.EditText;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Random;
 
@@ -31,6 +36,8 @@ public class Synth {
     private native void setOscVolume(int oscId, double volume);
     private native void setOscAttack(int oscId, double amount);
 
+    Database db;
+
     // class variables
     int MAX_POINTERS = 5;
     double MAX_SPREAD = .4;
@@ -47,19 +54,12 @@ public class Synth {
     int xSegments = 4;
     int ySegments = 11;
 
-    double[] scale = {
-            38.89,
-            43.65,
-            49.00,
-            51.91,
-            58.27,
-            65.41,
-            73.42
-    };
+    int scaleLength = 7;
 
-    public Synth(int xres, int yres) {
+    public Synth(int xres, int yres, Database db) {
         this.xres = xres;
         this.yres = yres;
+        this.db = db;
         Random phaseGen = new Random();
         for (int i = 0; i < MAX_POINTERS; i++) {
             //setOscPhase(i, phaseGen.nextDouble());
@@ -138,8 +138,8 @@ public class Synth {
         int ySegmentRes = yres / ySegments;
         int ySegment = (int) Math.floor(y / ySegmentRes);
 
-        int noteIndex = Math.max(0, ySegment % scale.length);
-        int octaveBoost = ySegment >= scale.length ? 1 : 0;
+        int noteIndex = Math.max(0, ySegment % scaleLength);
+        int octaveBoost = ySegment >= scaleLength ? 1 : 0;
         int octave = (xSegment + 1) + octaveBoost;
 
         return new int[]{noteIndex, octave};
@@ -148,7 +148,9 @@ public class Synth {
     private double getNoteFrequency(int[] note) {
         int noteIndex = note[0];
         int octave = note[1];
-        return scale[noteIndex] * Math.pow(2, octave - 1);
+
+        JSONArray frequencies = db.getPreset().optJSONArray("frequencies");
+        return frequencies.optDouble(noteIndex) * Math.pow(2, octave - 1);
     }
 
     private int[] getRelativeNote(int[] note, int shift) {
@@ -156,13 +158,21 @@ public class Synth {
         int octave = note[1];
 
         int suppliedNoteIndex = noteIndex + shift;
-        double suppliedNoteIndexRatio = suppliedNoteIndex / scale.length;
+        double suppliedNoteIndexRatio = suppliedNoteIndex / scaleLength;
         int octaveShift = suppliedNoteIndexRatio >= 0 ? (int) Math.floor(suppliedNoteIndexRatio) : (int) Math.ceil(suppliedNoteIndexRatio);
 
-        int relativeNoteIndex = ((suppliedNoteIndex % scale.length) + scale.length) % scale.length;
+        int relativeNoteIndex = ((suppliedNoteIndex % scaleLength) + scaleLength) % scaleLength;
         int relativeOctave = octave + octaveShift;
 
         return new int[]{relativeNoteIndex, relativeOctave};
     }
 
+    /* JOSH - THIS IS ONLY USED TO POPULATE THE FREQUENCY UI ELEMENTS.
+     *  IT CAN BE MOVED TO THE MAIN ACTIVITY INSTEAD OF BEING A SYNTH METHOD. */
+    public Double getNoteFrequency(int note) {
+        int noteIndex = note;
+
+        JSONArray frequencies = db.getPreset().optJSONArray("frequencies");
+        return frequencies.optDouble(noteIndex);
+    }
 }
