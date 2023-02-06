@@ -68,7 +68,6 @@ public class Database {
         // save to internal storage
         saveToInternalStorage(json);
     }
-
     private void saveToInternalStorage(String dbJSON) {
         try {
             FileOutputStream fos = new FileOutputStream(dbFile);
@@ -92,7 +91,6 @@ public class Database {
         return model.optJSONObject("config");
     }
 
-    // getPreset() - Get the currently in use preset
     public JSONObject getPreset() {
         JSONObject preset = null;
         // get preset id from config

@@ -54,14 +54,7 @@
         58.27,
         65.41,
         73.42
-      ],
-      "sensorEffects": {
-        "gyroscope": {
-          "x": "filter",
-          "y": "reverb",
-          "z": "voices"
-        }
-      }
+      ]
     }
   ]
 }
