@@ -37,8 +37,12 @@ public class Synth {
     int pointers = 0;
     int voicesCount = 0;
     double spread = .07;
-    //effectMapper handles all things related to which axis controls which effect.
-    EffectMapper effectMapper = new EffectMapper();
+    double voices = 0;
+    double reverb = 0;
+    double filter = 0;
+    double bitCrush = 0;
+    double[][] pointerStates = new double[MAX_POINTERS][2];
+
     int xres, yres;
     int xSegments = 4;
     int ySegments = 11;
@@ -110,20 +114,19 @@ public class Synth {
         }
     }
 
-
-
     public void rotation(float x, float y, float z) {
         //filter = ((1 - ((x % 2) + 2) % 2) + 1) / 2;
-        effectMapper.setX(Math.abs(x));
-        effectMapper.setY(Math.abs(Math.min(y, 0)));
-        effectMapper.setSpecific(1,3, Math.max(y, 0));
-        effectMapper.setZ(z);
+        voices = Math.abs(x);
+        filter = z;
+        reverb = Math.abs(Math.min(y, 0));
+        bitCrush = Math.max(y, 0);
 
-        setReverb(effectMapper.getValue(2));
-        setBitCrush(effectMapper.getValue(3));
-        setFilter(effectMapper.getValue(1));
+        setReverb(reverb);
+        setBitCrush(bitCrush);
+        setFilter(filter);
+
         for (int i = 0; i < MAX_POINTERS; i++) {
-            setOscVoicesVolume(i, effectMapper.getValue(0));
+            setOscVoicesVolume(i, voices);
         }
 
     }
