@@ -1,6 +1,7 @@
 package com.dillxn.tactilesynth;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.Activity;
 import android.content.Context;
@@ -227,18 +228,12 @@ public class MainActivity extends Activity implements SensorEventListener {
     public void menuToggle(View layout){
         EditText[] freqsUI = getFreqUI();
         Button setFreqButton = findViewById(R.id.setFreqBtn);
+        ConstraintLayout debugUI = findViewById(R.id.debugUI);
 
-        if(setFreqButton.getVisibility() == View.VISIBLE){
-            setFreqButton.setVisibility(View.INVISIBLE);
-            for (EditText box:freqsUI) {
-                box.setVisibility(View.INVISIBLE);
-            }
-        }
-        else {
-            setFreqButton.setVisibility(View.VISIBLE);
-            for (EditText box:freqsUI) {
-                box.setVisibility(View.VISIBLE);
-            }
+        if(debugUI.getVisibility() == View.VISIBLE){
+            debugUI.setVisibility(View.INVISIBLE);
+        } else {
+            debugUI.setVisibility(View.VISIBLE);
         }
     }
 }
