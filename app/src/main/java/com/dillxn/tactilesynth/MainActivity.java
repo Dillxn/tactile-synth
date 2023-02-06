@@ -13,21 +13,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.view.MotionEvent;
 import android.widget.VideoView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
+import java.io.IOException;
 import java.text.DecimalFormat;
 
 
 public class MainActivity extends Activity implements SensorEventListener {
-
 
     // Used to load the 'tactilesynth' library on application startup.
     static {
@@ -59,6 +54,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         super.onCreate(savedInstanceState);
 
         db = new Database(this);
+
         // set up UI
         setContentView(R.layout.activity_main);
         // make fullscreen
@@ -85,18 +81,13 @@ public class MainActivity extends Activity implements SensorEventListener {
         // Init synth
         this.synth = new Synth(xres, yres, db);
 
-        // Load frequency values to UI
-        setFreqUI();
-
         // start sensor listening
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
+
         // start audio engine
         startEngine();
-
     }
-
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -104,8 +95,6 @@ public class MainActivity extends Activity implements SensorEventListener {
         synth.touchEvent(event);
         return true;
     }
-
-
 
     protected void onResume() {
         super.onResume();
@@ -186,41 +175,5 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
-    }
-
-
-
-    /*  JOSH - GRABS UI FREQUENCY ELEMENTS */
-    public EditText[] getFreqUI(){
-        EditText freqs[] = {
-                (EditText) findViewById(R.id.freq1),
-                (EditText) findViewById(R.id.freq2),
-                (EditText) findViewById(R.id.freq3),
-                (EditText) findViewById(R.id.freq4),
-                (EditText) findViewById(R.id.freq5),
-                (EditText) findViewById(R.id.freq6),
-                (EditText) findViewById(R.id.freq7)};
-        return freqs;
-    }
-
-    /*  JOSH - WRITES FREQUENCIES FOUND IN RUNNING MODEL TO UI */
-    private void setFreqUI() {
-        EditText[] freqsUI = getFreqUI();
-
-        for(int i = 0; i < 7; i++){
-            freqsUI[i].setText(synth.getNoteFrequency(i).toString());
-        }
-    }
-
-    /*  JOSH - WRITES FREQUENCIES FOUND IN UI ELEMENTS INTO THE RUNNING MODEL */
-    public void setFreqs(View layout) throws JSONException {
-        JSONArray freqs = new JSONArray();
-        EditText[] freqsUI = getFreqUI();
-
-        for(int i = 0; i < 7; i++){
-            freqs.put(String.valueOf(freqsUI[i].getText()));
-        }
-
-        db.getPreset().put("frequencies", freqs);
     }
 }
