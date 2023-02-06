@@ -1,7 +1,6 @@
 package com.dillxn.tactilesynth;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,22 +13,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.view.MotionEvent;
 import android.widget.VideoView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
+import java.io.IOException;
 import java.text.DecimalFormat;
 
 
 public class MainActivity extends Activity implements SensorEventListener {
-
 
     // Used to load the 'tactilesynth' library on application startup.
     static {
@@ -61,6 +54,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         super.onCreate(savedInstanceState);
 
         db = new Database(this);
+
         // set up UI
         setContentView(R.layout.activity_main);
         // make fullscreen
@@ -87,18 +81,13 @@ public class MainActivity extends Activity implements SensorEventListener {
         // Init synth
         this.synth = new Synth(xres, yres, db);
 
-        // Load frequency values to UI
-        setFreqUI();
-
         // start sensor listening
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
+
         // start audio engine
         startEngine();
-
     }
-
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -106,8 +95,6 @@ public class MainActivity extends Activity implements SensorEventListener {
         synth.touchEvent(event);
         return true;
     }
-
-
 
     protected void onResume() {
         super.onResume();
@@ -141,7 +128,6 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         Sensor sensor = event.sensor;
-
         switch (sensor.getType()) {
             case Sensor.TYPE_GAME_ROTATION_VECTOR: {
                 updateOrientationAngles();
@@ -152,7 +138,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                 if (y > maxY) maxY = y;
                 if (z > maxZ) maxZ = z;
                 synth.rotation(x, y, z);
-                setRotationUI(x, y, z);
+
                 break;
             }
             case Sensor.TYPE_ACCELEROMETER: {
@@ -189,62 +175,5 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
-    }
-
-
-
-    /*  JOSH - GRABS UI FREQUENCY ELEMENTS */
-    public EditText[] getFreqUI(){
-        return new EditText[]{
-                findViewById(R.id.freq1),
-                findViewById(R.id.freq2),
-                findViewById(R.id.freq3),
-                findViewById(R.id.freq4),
-                findViewById(R.id.freq5),
-                findViewById(R.id.freq6),
-                findViewById(R.id.freq7)};
-    }
-
-    /*  JOSH - WRITES FREQUENCIES FOUND IN RUNNING MODEL TO UI */
-    private void setFreqUI() {
-        EditText[] freqsUI = getFreqUI();
-
-        for(int i = 0; i < 7; i++){
-            freqsUI[i].setText(synth.getNoteFrequency(i).toString());
-        }
-    }
-
-    /*  JOSH - WRITES FREQUENCIES FOUND IN UI ELEMENTS INTO THE RUNNING MODEL */
-    public void setFreqs(View layout) throws JSONException {
-        JSONArray freqs = new JSONArray();
-        EditText[] freqsUI = getFreqUI();
-
-        for(int i = 0; i < 7; i++){
-            freqs.put(String.valueOf(freqsUI[i].getText()));
-        }
-
-        db.getPreset().put("frequencies", freqs);
-    }
-
-    /* JOSH - POPULATES ROTATION VALUES FOUND IN THE DEBUG UI */
-    public void setRotationUI(float x, float y, float z){
-        TextView xRotation = findViewById(R.id.xRotation);
-        TextView yRotation = findViewById(R.id.yRotation);
-        TextView zRotation = findViewById(R.id.zRotation);
-
-        xRotation.setText("X_ROTATION: " + String.valueOf(x));
-        yRotation.setText("Y_ROTATION: " + String.valueOf(y));
-        zRotation.setText("Z_ROTATION: " + String.valueOf(z));
-    }
-
-    /* JOSH - ENABLES AND DISABLES THE DEBUG UI */
-    public void menuToggle(View layout){
-        ConstraintLayout debugUI = findViewById(R.id.debugUI);
-
-        if(debugUI.getVisibility() == View.VISIBLE){
-            debugUI.setVisibility(View.INVISIBLE);
-        } else {
-            debugUI.setVisibility(View.VISIBLE);
-        }
     }
 }
