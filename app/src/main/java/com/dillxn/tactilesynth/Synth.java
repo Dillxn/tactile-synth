@@ -51,8 +51,9 @@ public class Synth {
     int xres, yres;
     int xSegments = 4;
     int ySegments = 11;
-
     int scaleLength = 7;
+
+
 
     public Synth(int xres, int yres, Database db) {
         this.xres = xres;
@@ -119,14 +120,45 @@ public class Synth {
         reverb = Math.abs(Math.min(y, 0));
         bitCrush = Math.max(y, 0);
 
-        setReverb(reverb);
-        setBitCrush(bitCrush);
-        setFilter(filter);
+        x = (float) Math.round(x * 100) / 100;
+        y = (float) Math.round(y * 100) / 100;
+        z = (float) Math.round(z * 100) / 100;
 
-        for (int i = 0; i < MAX_POINTERS; i++) {
-            setOscVoicesVolume(i, voices);
+
+
+        JSONObject sensorEffects = db.getPreset().optJSONObject("sensorEffects");
+
+
+        JSONObject gyroscopeEffects = sensorEffects.optJSONObject("gyroscope");
+
+        String xEffect = gyroscopeEffects.optString("x");
+        String yEffect = gyroscopeEffects.optString("y");
+        String zEffect = gyroscopeEffects.optString("z");
+
+
+        setEffect(xEffect, Math.abs(x));
+        setEffect(yEffect, Math.abs(y));
+        setEffect(zEffect, Math.abs(z));
+    }
+
+    private void setEffect(String effectName, float effectValue) {
+        switch (effectName) {
+            case "reverb": {
+                setReverb(effectValue);
+                break;
+            }
+            case "bitcrush": {
+                setBitCrush(effectValue);
+            }
+            case "voices": {
+                for (int i = 0; i < MAX_POINTERS; i++) {
+                    setOscVoicesVolume(i, effectValue);
+                }
+            }
+            case "filter": {
+                setFilter(effectValue);
+            }
         }
-
     }
 
     private int[] getNoteFromXY(float x, float y) {
@@ -164,5 +196,4 @@ public class Synth {
 
         return new int[]{relativeNoteIndex, relativeOctave};
     }
-
 }
