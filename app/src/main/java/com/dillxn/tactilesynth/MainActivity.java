@@ -16,12 +16,10 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.view.MotionEvent;
 import android.widget.VideoView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -61,6 +59,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         super.onCreate(savedInstanceState);
 
         db = new Database(this);
+
         // set up UI
         setContentView(R.layout.activity_main);
         // make fullscreen
@@ -141,7 +140,6 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         Sensor sensor = event.sensor;
-
         switch (sensor.getType()) {
             case Sensor.TYPE_GAME_ROTATION_VECTOR: {
                 updateOrientationAngles();
