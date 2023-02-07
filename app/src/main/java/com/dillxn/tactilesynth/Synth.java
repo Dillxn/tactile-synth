@@ -196,4 +196,13 @@ public class Synth {
 
         return new int[]{relativeNoteIndex, relativeOctave};
     }
+
+    /* JOSH - THIS IS ONLY USED TO POPULATE THE FREQUENCY UI ELEMENTS.
+     *  IT CAN BE MOVED TO THE MAIN ACTIVITY INSTEAD OF BEING A SYNTH METHOD. */
+    public Double getNoteFrequency(int note) {
+        int noteIndex = note;
+
+        JSONArray frequencies = db.getPreset().optJSONArray("frequencies");
+        return frequencies.optDouble(noteIndex);
+    }
 }
