@@ -131,14 +131,21 @@ public class Synth {
 
         JSONObject gyroscopeEffects = sensorEffects.optJSONObject("gyroscope");
 
-        String xEffect = gyroscopeEffects.optString("x");
-        String yEffect = gyroscopeEffects.optString("y");
-        String zEffect = gyroscopeEffects.optString("z");
+        //gets all arrays of effects
+        JSONArray xEffect = gyroscopeEffects.optJSONArray("x");
+        JSONArray yEffect = gyroscopeEffects.optJSONArray("y");
+        JSONArray zEffect = gyroscopeEffects.optJSONArray("z");
 
-
-        setEffect(xEffect, Math.abs(x));
-        setEffect(yEffect, Math.abs(y));
-        setEffect(zEffect, Math.abs(z));
+        //for each axis we map the effects to the that axis
+        for(int i = 0; i < xEffect.length(); i++){
+            setEffect((String) xEffect.opt(i), Math.abs(x));
+        }
+        for(int i = 0; i < yEffect.length(); i++){
+            setEffect((String) yEffect.opt(i), Math.abs(y));
+        }
+        for(int i = 0; i < zEffect.length(); i++){
+            setEffect((String) yEffect.opt(i), Math.abs(z));
+        }
     }
 
     private void setEffect(String effectName, float effectValue) {
