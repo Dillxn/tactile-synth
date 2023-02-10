@@ -38,6 +38,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     Synth synth;
     Database db;
+    User user;
 
     // class variables
     private SensorManager sensorManager;
@@ -60,6 +61,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         db = new Database(this);
 
+        user = new User(db);
         // set up UI
         setContentView(R.layout.activity_main);
         // make fullscreen

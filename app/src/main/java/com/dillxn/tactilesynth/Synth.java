@@ -180,21 +180,7 @@ public class Synth {
         int octave = note[1];
 
         JSONArray frequencies = db.getPreset().optJSONArray("frequencies");
-        return frequencies.optDouble(noteIndex) * Math.pow(2, octave - 1);
-    }
-
-    private int[] getRelativeNote(int[] note, int shift) {
-        int noteIndex = note[0];
-        int octave = note[1];
-
-        int suppliedNoteIndex = noteIndex + shift;
-        double suppliedNoteIndexRatio = suppliedNoteIndex / scaleLength;
-        int octaveShift = suppliedNoteIndexRatio >= 0 ? (int) Math.floor(suppliedNoteIndexRatio) : (int) Math.ceil(suppliedNoteIndexRatio);
-
-        int relativeNoteIndex = ((suppliedNoteIndex % scaleLength) + scaleLength) % scaleLength;
-        int relativeOctave = octave + octaveShift;
-
-        return new int[]{relativeNoteIndex, relativeOctave};
+        return frequencies.optDouble(noteIndex) * Math.pow(2, octave);
     }
 
     /* JOSH - THIS IS ONLY USED TO POPULATE THE FREQUENCY UI ELEMENTS.
