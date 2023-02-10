@@ -57,7 +57,7 @@
       ],
       "sensorEffects": {
         "gyroscope": {
-          "x": ["filter", "bitcrush"],
+          "x": ["filter"],
           "y": ["reverb"],
           "z": ["voices"]
         }

@@ -135,7 +135,6 @@ public class Synth {
         JSONArray xEffect = gyroscopeEffects.optJSONArray("x");
         JSONArray yEffect = gyroscopeEffects.optJSONArray("y");
         JSONArray zEffect = gyroscopeEffects.optJSONArray("z");
-
         //for each axis we map the effects to the that axis
         for(int i = 0; i < xEffect.length(); i++){
             setEffect((String) xEffect.opt(i), Math.abs(x));
@@ -144,7 +143,7 @@ public class Synth {
             setEffect((String) yEffect.opt(i), Math.abs(y));
         }
         for(int i = 0; i < zEffect.length(); i++){
-            setEffect((String) yEffect.opt(i), Math.abs(z));
+            setEffect((String) zEffect.opt(i), Math.abs(z));
         }
     }
 
@@ -154,16 +153,31 @@ public class Synth {
                 setReverb(effectValue);
                 break;
             }
+            case "-reverb": {
+                setReverb(-1 * effectValue);
+                break;
+            }
             case "bitcrush": {
                 setBitCrush(effectValue);
+            }
+            case "-bitcrush": {
+                setBitCrush(-1*effectValue);
             }
             case "voices": {
                 for (int i = 0; i < MAX_POINTERS; i++) {
                     setOscVoicesVolume(i, effectValue);
                 }
             }
+            case "-voices": {
+                for (int i = 0; i < MAX_POINTERS; i++) {
+                    setOscVoicesVolume(i, -1*effectValue);
+                }
+            }
             case "filter": {
                 setFilter(effectValue);
+            }
+            case "-filter": {
+                setFilter(-1*effectValue);
             }
         }
     }
