@@ -131,14 +131,20 @@ public class Synth {
 
         JSONObject gyroscopeEffects = sensorEffects.optJSONObject("gyroscope");
 
-        String xEffect = gyroscopeEffects.optString("x");
-        String yEffect = gyroscopeEffects.optString("y");
-        String zEffect = gyroscopeEffects.optString("z");
-
-
-        setEffect(xEffect, Math.abs(x));
-        setEffect(yEffect, Math.abs(y));
-        setEffect(zEffect, Math.abs(z));
+        //gets all arrays of effects
+        JSONArray xEffect = gyroscopeEffects.optJSONArray("x");
+        JSONArray yEffect = gyroscopeEffects.optJSONArray("y");
+        JSONArray zEffect = gyroscopeEffects.optJSONArray("z");
+        //for each axis we map the effects to the that axis
+        for(int i = 0; i < xEffect.length(); i++){
+            setEffect((String) xEffect.opt(i), Math.abs(x));
+        }
+        for(int i = 0; i < yEffect.length(); i++){
+            setEffect((String) yEffect.opt(i), Math.abs(y));
+        }
+        for(int i = 0; i < zEffect.length(); i++){
+            setEffect((String) zEffect.opt(i), Math.abs(z));
+        }
     }
 
     private void setEffect(String effectName, float effectValue) {
@@ -147,16 +153,31 @@ public class Synth {
                 setReverb(effectValue);
                 break;
             }
+            case "-reverb": {
+                setReverb(-1 * effectValue);
+                break;
+            }
             case "bitcrush": {
                 setBitCrush(effectValue);
+            }
+            case "-bitcrush": {
+                setBitCrush(-1*effectValue);
             }
             case "voices": {
                 for (int i = 0; i < MAX_POINTERS; i++) {
                     setOscVoicesVolume(i, effectValue);
                 }
             }
+            case "-voices": {
+                for (int i = 0; i < MAX_POINTERS; i++) {
+                    setOscVoicesVolume(i, -1*effectValue);
+                }
+            }
             case "filter": {
                 setFilter(effectValue);
+            }
+            case "-filter": {
+                setFilter(-1*effectValue);
             }
         }
     }
