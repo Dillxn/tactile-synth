@@ -137,13 +137,13 @@ public class Synth {
         JSONArray zEffect = gyroscopeEffects.optJSONArray("z");
         //for each axis we map the effects to the that axis
         for(int i = 0; i < xEffect.length(); i++){
-            setEffect((String) xEffect.opt(i), Math.abs(x));
+            setEffect((String) xEffect.opt(i), x);
         }
         for(int i = 0; i < yEffect.length(); i++){
-            setEffect((String) yEffect.opt(i), Math.abs(y));
+            setEffect((String) yEffect.opt(i), y);
         }
         for(int i = 0; i < zEffect.length(); i++){
-            setEffect((String) zEffect.opt(i), Math.abs(z));
+            setEffect((String) zEffect.opt(i), z);
         }
     }
 

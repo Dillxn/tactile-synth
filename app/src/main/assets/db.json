@@ -57,9 +57,9 @@
       ],
       "sensorEffects": {
         "gyroscope": {
-          "x": ["filter"],
+          "x": ["voices"],
           "y": ["reverb"],
-          "z": ["voices"]
+          "z": ["filter"]
         }
       }
     }
