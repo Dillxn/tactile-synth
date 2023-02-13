@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -22,8 +24,11 @@ import android.view.MotionEvent;
 import android.widget.VideoView;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class MainActivity extends Activity implements SensorEventListener {
@@ -50,7 +55,19 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     VideoView background;
 
-    TextView textView;
+    // EFFECT CHANGES STUFF
+    TextView xEffects;
+    TextView yEffects;
+    TextView zEffects;
+    boolean[] xSelectedEffects;
+    boolean[] ySelectedEffects;
+    boolean[] zSelectedEffects;
+    ArrayList<Integer> xEffectList = new ArrayList<>();
+    ArrayList<Integer> yEffectList = new ArrayList<>();
+    ArrayList<Integer> zEffectList = new ArrayList<>();
+    String[] effectArray = {"reverb", "voices", "filter"};
+    boolean debugMenu = false;
+
     float maxX = 0;
     float maxY = 0;
     float maxZ = 0;
@@ -91,6 +108,41 @@ public class MainActivity extends Activity implements SensorEventListener {
         // Load frequency values to UI
         setFreqUI();
 
+
+        // JOSH
+        // BEGIN SECTION FOR EFFECTS SELECTION IN DEBUG
+        xEffects = findViewById(R.id.xEffects);
+        yEffects = findViewById(R.id.yEffects);
+        zEffects = findViewById(R.id.zEffects);
+
+        initEffectsUI(xEffects, yEffects, zEffects);
+
+        xSelectedEffects = new boolean[effectArray.length];
+        ySelectedEffects = new boolean[effectArray.length];
+        zSelectedEffects = new boolean[effectArray.length];
+
+        xEffects.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                effectSetDialog(xEffects, xSelectedEffects, xEffectList, "x");
+            }
+        });
+
+        yEffects.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                effectSetDialog(yEffects, ySelectedEffects, yEffectList, "y");
+            }
+        });
+
+        zEffects.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                effectSetDialog(zEffects, zSelectedEffects, zEffectList, "z");
+            }
+        });
+        // END SECTION
+
         // start sensor listening
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
@@ -99,6 +151,125 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     }
 
+    // JOSH - POPULATES DEBUG TEXTVIEWS FOR EFFECTS ON APP STARTUP
+    private void initEffectsUI(TextView xEffects, TextView yEffects, TextView zEffects) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            JSONArray tempEffectString = db.getPreset().getJSONObject("sensorEffects").getJSONObject("gyroscope").getJSONArray("x");
+            for(int i = 0; i < tempEffectString.length(); i++){
+                stringBuilder.append(tempEffectString.get(i).toString());
+
+                if (i != tempEffectString.length() - 1) {
+                    stringBuilder.append(", ");
+                }
+            }
+            xEffects.setText(stringBuilder.toString());
+            stringBuilder.delete(0,stringBuilder.length());
+
+            tempEffectString = db.getPreset().getJSONObject("sensorEffects").getJSONObject("gyroscope").getJSONArray("y");
+            for(int i = 0; i < tempEffectString.length(); i++){
+                stringBuilder.append(tempEffectString.get(i).toString());
+
+                if (i != tempEffectString.length() - 1) {
+                    stringBuilder.append(", ");
+                }
+            }
+            yEffects.setText(stringBuilder.toString());
+            stringBuilder.delete(0,stringBuilder.length());
+
+            tempEffectString = db.getPreset().getJSONObject("sensorEffects").getJSONObject("gyroscope").getJSONArray("z");
+            for(int i = 0; i < tempEffectString.length(); i++){
+                stringBuilder.append(tempEffectString.get(i).toString());
+
+                if (i != tempEffectString.length() - 1) {
+                    stringBuilder.append(", ");
+                }
+            }
+            zEffects.setText(stringBuilder.toString());
+            stringBuilder.delete(0,stringBuilder.length());
+
+
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // JOSH - USED FOR POPULATING EFFECT FOR AXIS
+    private void effectSetDialog(TextView textView, boolean[] selectedEffects, ArrayList<Integer> effectList, String axis) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+        builder.setTitle("Select Effect");
+
+        builder.setCancelable(false);
+
+        builder.setMultiChoiceItems(effectArray, selectedEffects, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                if (b) {
+                    effectList.add(i);
+                    Collections.sort(effectList);
+                } else {
+                    effectList.remove(Integer.valueOf(i));
+                }
+            }
+        });
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                StringBuilder stringBuilder = new StringBuilder();
+                JSONArray effects = new JSONArray();
+
+                JSONObject preset = db.getPreset();
+                JSONObject gyroEffects = null;
+
+                for (int j = 0; j < effectList.size(); j++){
+                    stringBuilder.append(effectArray[effectList.get(j)]);
+                    effects.put(effectArray[effectList.get(j)]);
+
+                    if (j != effectList.size() - 1) {
+                        stringBuilder.append(", ");
+                    }
+                }
+                textView.setText(stringBuilder.toString());
+                try {
+                    db.getPreset().getJSONObject("sensorEffects").getJSONObject("gyroscope").put(axis, effects);
+                    synth.resetEffects();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                JSONArray effects = new JSONArray();
+
+                for (int j = 0; j < selectedEffects.length; j++){
+                    selectedEffects[j] = false;
+                    effectList.clear();
+                    textView.setText("");
+                }
+                try {
+                    db.getPreset().getJSONObject("sensorEffects").getJSONObject("gyroscope").put(axis, effects);
+                    synth.resetEffects();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        builder.show();
+    }
 
 
     @Override
@@ -107,8 +278,6 @@ public class MainActivity extends Activity implements SensorEventListener {
         synth.touchEvent(event);
         return true;
     }
-
-
 
     protected void onResume() {
         super.onResume();
@@ -152,7 +321,9 @@ public class MainActivity extends Activity implements SensorEventListener {
                 if (y > maxY) maxY = y;
                 if (z > maxZ) maxZ = z;
                 synth.rotation(x, y, z);
-                setRotationUI(x, y, z);
+
+                if(debugMenu) setRotationUI(x, y, z); // UPDATE GYRO ANGLES ONLY IF DEBUG MENU IS ACTIVE
+
                 break;
             }
             case Sensor.TYPE_ACCELEROMETER: {
@@ -190,8 +361,6 @@ public class MainActivity extends Activity implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
-
-
 
     /*  JOSH - GRABS UI FREQUENCY ELEMENTS */
     public EditText[] getFreqUI(){
@@ -241,10 +410,12 @@ public class MainActivity extends Activity implements SensorEventListener {
     public void menuToggle(View layout){
         ConstraintLayout debugUI = findViewById(R.id.debugUI);
 
-        if(debugUI.getVisibility() == View.VISIBLE){
+        if(debugMenu){
             debugUI.setVisibility(View.INVISIBLE);
+            debugMenu = !debugMenu;
         } else {
             debugUI.setVisibility(View.VISIBLE);
+            debugMenu = !debugMenu;
         }
     }
 }

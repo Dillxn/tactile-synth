@@ -48,6 +48,7 @@
             android:id="@+id/debugUI"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="invisible"
             tools:layout_editor_absoluteX="87dp"
             tools:layout_editor_absoluteY="25dp">
 
@@ -174,6 +175,45 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/yRotation" />
+
+            <TextView
+                android:id="@+id/xEffects"
+                android:layout_width="201dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:background="@android:drawable/editbox_background"
+                android:drawableRight="@android:drawable/arrow_down_float"
+                android:hint="Select effects for this axis"
+                android:textColor="#000000"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/xRotation" />
+
+            <TextView
+                android:id="@+id/yEffects"
+                android:layout_width="201dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:background="@android:drawable/editbox_background"
+                android:drawableRight="@android:drawable/arrow_down_float"
+                android:hint="Select effects for this axis"
+                android:textColor="#000000"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/yRotation" />
+
+            <TextView
+                android:id="@+id/zEffects"
+                android:layout_width="201dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:background="@android:drawable/editbox_background"
+                android:drawableRight="@android:drawable/arrow_down_float"
+                android:hint="Select effects for this axis"
+                android:textColor="#000000"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/zRotation" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
