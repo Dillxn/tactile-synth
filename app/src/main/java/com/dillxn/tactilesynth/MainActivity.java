@@ -56,7 +56,6 @@ public class MainActivity extends Activity implements SensorEventListener {
     float maxY = 0;
     float maxZ = 0;
 
-    private MediaRecorder mediaRecorder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,22 +98,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         // start audio engine
         startEngine();
-
-        //initialize MediaRecorder
-        mediaRecorder = new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        String filePath = getExternalFilesDir(null) + "/SessionRecordings.3gp";
-        mediaRecorder.setOutputFile(filePath);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        //need to figure out when to start the recording. Then figure out how to stop the recording.
-        //would it be after a specific time. or maybe until an event.
-        //then I need to figure out how the strage works and try to replay a recording and see how it sounds.
-        //might need to figure out a different recording solution if the mic doesn't work.
     }
-
-
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // forward touch events to synth
