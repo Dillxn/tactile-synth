@@ -18,6 +18,16 @@ Java_com_dillxn_tactilesynth_MainActivity_stopEngine(JNIEnv *env, jobject thiz) 
 }
 extern "C"
 JNIEXPORT void JNICALL
+Java_com_dillxn_tactilesynth_SynthFragment_startEngine(JNIEnv *env, jobject thiz) {
+    audioEngine->start();
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dillxn_tactilesynth_SynthFragment_stopEngine(JNIEnv *env, jobject thiz) {
+    audioEngine->stop();
+}
+extern "C"
+JNIEXPORT void JNICALL
 Java_com_dillxn_tactilesynth_Synth_setOscFrequency(JNIEnv *env, jobject thiz, jint oscId, jdouble frequency) {
     audioEngine->setOscFrequency(oscId, frequency);
 }
