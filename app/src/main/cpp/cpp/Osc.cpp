@@ -1,7 +1,3 @@
-//
-// Created by Dillon on 4/22/2022.
-//
-
 #include "Osc.h"
 #include <math.h>
 #include <android/log.h>
@@ -50,7 +46,7 @@ float Osc::render(int frame) {
         for (int i = start; i < end; i++) {
             // add waveform data
             double voicePhase = voiceStates_[i][1];
-            audioData += getWaveformData(waveform_, voicePhase) * voicesVolume_;
+            audioData += getWaveformData(waveform_, voicePhase) * abs(voicesVolume_);
             // increment phase
             double voicePhaseIncrement = voiceStates_[i][2];
             voiceStates_[i][1] = fmod(voicePhase + voicePhaseIncrement, TWO_PI);

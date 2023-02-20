@@ -1,7 +1,3 @@
-//
-// Created by Dillon on 4/22/2022.
-//
-
 #ifndef TACTILESYNTH_OSC_H
 #define TACTILESYNTH_OSC_H
 
