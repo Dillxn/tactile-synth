@@ -27,7 +27,7 @@ add_library( # Sets the name of the library.
 
         cpp/AudioEngine.cpp
 
-        cpp/AudioMutator.cpp
+        cpp/AudioGenerator.cpp
 
         cpp/MVerb.h)
 
