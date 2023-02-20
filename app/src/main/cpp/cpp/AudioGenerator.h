@@ -1,9 +1,5 @@
-//
-// Created by Dillon on 4/24/2022.
-//
-
-#ifndef TACTILESYNTH_AUDIOMUTATOR_H
-#define TACTILESYNTH_AUDIOMUTATOR_H
+#ifndef TACTILESYNTH_AUDIOGENERATOR_H
+#define TACTILESYNTH_AUDIOGENERATOR_H
 
 #define MAX_OSCILLATORS 5
 #define MAX_FREQUENCY 20000
@@ -11,11 +7,11 @@
 #include "Osc.h"
 #include "MVerb.h"
 
-class AudioMutator {
+class AudioGenerator {
 public:
-    AudioMutator();
+    AudioGenerator();
 
-    void mutate(void *audioData, int32_t numFrames);
+    void generate(void *audioData, int32_t numFrames);
 
     void toggleOsc(int oscId, bool isToneOn);
 
@@ -64,4 +60,4 @@ private:
 };
 
 
-#endif //TACTILESYNTH_AUDIOMUTATOR_H
+#endif //TACTILESYNTH_AUDIOGENERATOR_H

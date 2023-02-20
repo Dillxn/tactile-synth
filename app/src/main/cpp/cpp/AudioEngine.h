@@ -1,14 +1,12 @@
-//
-// Created by Dillon on 4/23/2022.
-//
-
 #ifndef TACTILESYNTH_AUDIOENGINE_H
 #define TACTILESYNTH_AUDIOENGINE_H
 
 
 #include <aaudio/AAudio.h>
 #include "Osc.h"
-#include "AudioMutator.h"
+#include "AudioGenerator.h"
+#include <vector>
+#include <mutex>
 
 class AudioEngine {
 public:
@@ -35,9 +33,12 @@ public:
 
     void setFilter(double amount);
 
+
 private:
     AAudioStream *stream_;
-    AudioMutator audioMutator;
+    AudioGenerator audioMutator;
+    std::mutex recordedAudioDataMutex_;
+    std::vector<float> recordedAudioData_;
 };
 
 
