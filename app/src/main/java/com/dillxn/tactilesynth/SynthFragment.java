@@ -326,8 +326,8 @@ public class SynthFragment extends Fragment implements SensorEventListener {
 
         builder.setMultiChoiceItems(effectArray, selectedEffects, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                if (b) {
+            public void onClick(DialogInterface dialogInterface, int i, boolean checked) {
+                if (checked) {
                     effectList.add(i);
                     Collections.sort(effectList);
                 } else {
