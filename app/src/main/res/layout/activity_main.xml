@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout"
@@ -7,24 +7,40 @@
     android:layout_height="match_parent"
     android:background="#2D2F31"
     android:backgroundTint="#2D2F31"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <VideoView
-        android:id="@+id/background"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="703dp"
-        android:layout_below="@id/constraintLayout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="28dp"
-        android:layout_marginRight="0dp" />
+        android:layout_height="30dp">
+
+        <Button
+            android:id="@+id/menuToggle"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:onClick="menuToggle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias=".5" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <VideoView
+            android:id="@+id/background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/constraintLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true" />
 
         <ImageView
             android:id="@+id/logo"
@@ -36,155 +52,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.dillxn.tactilesynth.Touchpad
-            android:id="@+id/touchpad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/debugUI"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentContainerView"
+            android:name="com.dillxn.tactilesynth.MenuFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:layout_editor_absoluteX="87dp"
-            tools:layout_editor_absoluteY="25dp">
-
-            <Button
-                android:id="@+id/setFreqBtn"
-                android:layout_width="65dp"
-                android:layout_height="50dp"
-                android:onClick="setFreqs"
-                android:text="Set"
-                android:visibility="visible"
-                app:iconPadding="6dp"
-                app:layout_constraintBottom_toTopOf="@+id/freq1"
-                app:layout_constraintStart_toStartOf="@+id/freq1"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <EditText
-                android:id="@+id/freq5"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:text="1"
-                android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/freq6"
-                app:layout_constraintStart_toStartOf="@+id/freq6"
-                app:layout_constraintTop_toBottomOf="@+id/freq4" />
-
-            <EditText
-                android:id="@+id/freq7"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:text="1"
-                android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/xRotation"
-                app:layout_constraintStart_toStartOf="@+id/xRotation"
-                app:layout_constraintTop_toBottomOf="@+id/freq6" />
-
-            <EditText
-                android:id="@+id/freq6"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:text="1"
-                android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/freq7"
-                app:layout_constraintStart_toStartOf="@+id/freq7"
-                app:layout_constraintTop_toBottomOf="@+id/freq5" />
-
-            <EditText
-                android:id="@+id/freq3"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:text="1"
-                android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/freq4"
-                app:layout_constraintStart_toStartOf="@+id/freq4"
-                app:layout_constraintTop_toBottomOf="@+id/freq2" />
-
-            <EditText
-                android:id="@+id/freq2"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:text="1"
-                android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/freq3"
-                app:layout_constraintStart_toStartOf="@+id/freq3"
-                app:layout_constraintTop_toBottomOf="@+id/freq1" />
-
-            <EditText
-                android:id="@+id/freq4"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:text="1"
-                android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/freq5"
-                app:layout_constraintStart_toStartOf="@+id/freq5"
-                app:layout_constraintTop_toBottomOf="@+id/freq3" />
-
-            <EditText
-                android:id="@+id/freq1"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:text="1"
-                android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/freq2"
-                app:layout_constraintStart_toStartOf="@+id/freq2"
-                app:layout_constraintTop_toBottomOf="@+id/setFreqBtn" />
-
-            <TextView
-                android:id="@+id/xRotation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="X_ROTATION"
-                app:layout_constraintBottom_toTopOf="@+id/yRotation"
-                app:layout_constraintStart_toStartOf="@+id/yRotation"
-                app:layout_constraintTop_toBottomOf="@+id/freq7" />
-
-            <TextView
-                android:id="@+id/yRotation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Y_ROTATION"
-                app:layout_constraintBottom_toTopOf="@+id/zRotation"
-                app:layout_constraintStart_toStartOf="@+id/zRotation"
-                app:layout_constraintTop_toBottomOf="@+id/xRotation" />
-
-            <TextView
-                android:id="@+id/zRotation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:text="Z_ROTATION"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/yRotation" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <Button
-            android:id="@+id/menuToggle"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:onClick="menuToggle"
-            android:text="Button"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5"
+            tools:layout="@layout/fragment_synth" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</RelativeLayout>
+
+</LinearLayout>

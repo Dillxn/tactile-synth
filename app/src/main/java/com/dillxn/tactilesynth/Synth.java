@@ -184,6 +184,7 @@ public class Synth {
             case "-filter": {
                 setFilter(-1*effectValue);
             }
+
         }
     }
 
@@ -217,6 +218,18 @@ public class Synth {
         JSONArray frequencies = db.getPreset().optJSONArray("frequencies");
         return frequencies.optDouble(noteIndex);
     }
+
+
+    public void resetEffects(){
+        setFilter(0);
+        setBitCrush(0);
+        setReverb(0);
+
+        for (int i = 0; i < MAX_POINTERS; i++) {
+            setOscVoicesVolume(i, 0);
+        }
+    }
+
 
     // play() - takes in recorded audio data and plays it in a separate thread
     public void play(float[] data) {
