@@ -1,12 +1,10 @@
 package com.dillxn.tactilesynth;
 
-import android.app.Activity;
-import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.os.Bundle;
+import static java.lang.Math.min;
+
+import android.media.AudioAttributes;
+import android.media.AudioFormat;
+import android.media.AudioTrack;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -33,6 +31,13 @@ public class Synth {
     private native void setFilter(double amount);
     private native void setOscVolume(int oscId, double volume);
     private native void setOscAttack(int oscId, double amount);
+    public native void startRecord();
+    public native void stopRecord();
+    public native float[] getRecordedAudioData();
+
+    public native int getSampleRate();
+    public native int getBufferSize();
+
 
     Database db;
 
@@ -117,7 +122,7 @@ public class Synth {
         //filter = ((1 - ((x % 2) + 2) % 2) + 1) / 2;
         voices = Math.abs(x);
         filter = z;
-        reverb = Math.abs(Math.min(y, 0));
+        reverb = Math.abs(min(y, 0));
         bitCrush = Math.max(y, 0);
 
         x = (float) Math.round(x * 100) / 100;
@@ -211,5 +216,39 @@ public class Synth {
 
         JSONArray frequencies = db.getPreset().optJSONArray("frequencies");
         return frequencies.optDouble(noteIndex);
+    }
+
+    // play() - takes in recorded audio data and plays it in a separate thread
+    public void play(float[] data) {
+        final int sampleRate = getSampleRate();
+
+        final int channelConfig = AudioFormat.CHANNEL_OUT_MONO;
+        final int audioFormat = AudioFormat.ENCODING_PCM_FLOAT;
+        final int bufferSize = getBufferSize();
+        final AudioTrack audioTrack = new AudioTrack.Builder()
+                .setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build())
+                .setAudioFormat(new AudioFormat.Builder()
+                        .setEncoding(audioFormat)
+                        .setSampleRate(sampleRate)
+                        .setChannelMask(channelConfig)
+                        .build())
+                .setBufferSizeInBytes(bufferSize)
+                .build();
+
+        if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+            new Thread(new Runnable() {
+                public void run() {
+                    audioTrack.play();
+                    audioTrack.write(data, 0, data.length, AudioTrack.WRITE_BLOCKING);
+                    audioTrack.stop();
+                    audioTrack.release();
+                }
+            }).start();
+        } else {
+            Log.e("AudioTrack", "Failed to initialize AudioTrack");
+        }
     }
 }

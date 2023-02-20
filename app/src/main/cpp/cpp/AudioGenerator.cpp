@@ -1,16 +1,12 @@
-//
-// Created by Dillon on 4/24/2022.
-//
-
-#include "AudioMutator.h"
+#include "AudioGenerator.h"
 #include <android/log.h>
 
-AudioMutator::AudioMutator() {
+AudioGenerator::AudioGenerator() {
     mVerb.setParameter(MVerb<float>::PREDELAY, 0);
     highPassFilter.Type(highPassFilter.HIGHPASS);
 }
 
-void AudioMutator::mutate(void *audioData, int32_t numFrames) {
+void AudioGenerator::generate(void *audioData, int32_t numFrames) {
     float *ad = static_cast<float *>(audioData);
 
     float digitAmount = ((1 - bitCrushMix_) * 8);
@@ -61,20 +57,20 @@ void AudioMutator::mutate(void *audioData, int32_t numFrames) {
 
 }
 
-void AudioMutator::toggleOsc(int oscId, bool isToneOn) {
+void AudioGenerator::toggleOsc(int oscId, bool isToneOn) {
     oscillators_[oscId].setWaveOn(isToneOn);
     countOscillators();
 }
 
-void AudioMutator::setOscFrequency(int oscId, double frequency) {
+void AudioGenerator::setOscFrequency(int oscId, double frequency) {
     oscillators_[oscId].setFrequency(frequency);
 }
 
-void AudioMutator::setOscPhase(int oscId, double offset) {
+void AudioGenerator::setOscPhase(int oscId, double offset) {
     oscillators_[oscId].setPhase(offset);
 }
 
-void AudioMutator::setSampleRate(int32_t rate) {
+void AudioGenerator::setSampleRate(int32_t rate) {
     for (int x = 0; x < MAX_OSCILLATORS; x++) {
         oscillators_[x].setSampleRate(rate);
     }
@@ -83,19 +79,19 @@ void AudioMutator::setSampleRate(int32_t rate) {
     highPassFilter.SetSampleRate(rate);
 }
 
-bool AudioMutator::isOscDown(int oscId) {
+bool AudioGenerator::isOscDown(int oscId) {
     return oscillators_[oscId].isWaveOn();
 }
 
-void AudioMutator::setOscVoices(int oscId, int voices) {
+void AudioGenerator::setOscVoices(int oscId, int voices) {
     oscillators_[oscId].setVoices(voices);
 }
 
-void AudioMutator::setOscSpread(int oscId, double spread) {
+void AudioGenerator::setOscSpread(int oscId, double spread) {
     oscillators_[oscId].setSpread(spread);
 }
 
-void AudioMutator::countOscillators() {
+void AudioGenerator::countOscillators() {
     int tempOscCount = 0;
     for (int x = 0; x < MAX_OSCILLATORS; x++)
         if (oscillators_[x].isWaveOn())
@@ -104,28 +100,28 @@ void AudioMutator::countOscillators() {
     oscCount_ = tempOscCount;
 }
 
-void AudioMutator::setReverb(double reverb) {
+void AudioGenerator::setReverb(double reverb) {
     //mVerb.setParameter(MVerb<float>::DECAY, reverb);
     reverbVolume_ = reverb;
 }
 
-void AudioMutator::setOscVoicesVolume(int oscId, double volume) {
+void AudioGenerator::setOscVoicesVolume(int oscId, double volume) {
         oscillators_[oscId].setVoicesVolume(volume);
 }
 
-void AudioMutator::setOscVolume(int oscId, double volume) {
+void AudioGenerator::setOscVolume(int oscId, double volume) {
         oscillators_[oscId].setVolume(volume);
 }
 
-void AudioMutator::setOscAttack(int oscId, double amount) {
+void AudioGenerator::setOscAttack(int oscId, double amount) {
         oscillators_[oscId].setAttack(amount);
 }
 
-void AudioMutator::setBitCrush(double amount) {
+void AudioGenerator::setBitCrush(double amount) {
     bitCrushMix_ = amount;
 }
 
-void AudioMutator::setFilter(double amount) {
+void AudioGenerator::setFilter(double amount) {
     lowPassAmount_ = fmax((amount), 0);
     lowPassFrequency_ = MAX_FREQUENCY - (pow(lowPassAmount_,.2) * MAX_FREQUENCY);
     lowPassFilter.Frequency(lowPassFrequency_);
