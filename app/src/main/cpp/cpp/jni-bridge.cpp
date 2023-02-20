@@ -8,16 +8,6 @@ static AudioEngine *audioEngine = new AudioEngine();
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_dillxn_tactilesynth_MainActivity_startEngine(JNIEnv *env, jobject thiz) {
-    audioEngine->start();
-}
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_dillxn_tactilesynth_MainActivity_stopEngine(JNIEnv *env, jobject thiz) {
-    audioEngine->stop();
-}
-extern "C"
-JNIEXPORT void JNICALL
 Java_com_dillxn_tactilesynth_SynthFragment_startEngine(JNIEnv *env, jobject thiz) {
     audioEngine->start();
 }
