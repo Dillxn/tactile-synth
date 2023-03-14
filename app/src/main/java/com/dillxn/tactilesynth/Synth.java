@@ -118,29 +118,20 @@ public class Synth {
         }
     }
 
+    //used for effects that map to axis.
     public void rotation(float x, float y, float z) {
         //filter = ((1 - ((x % 2) + 2) % 2) + 1) / 2;
-        voices = Math.abs(x);
-        filter = z;
-        reverb = Math.abs(min(y, 0));
-        bitCrush = Math.max(y, 0);
-
+        //^old comment
         x = (float) Math.round(x * 100) / 100;
         y = (float) Math.round(y * 100) / 100;
         z = (float) Math.round(z * 100) / 100;
-
-
-
+        //loads the sensorEffects from JSON and loads their effects into arrays.
         JSONObject sensorEffects = db.getPreset().optJSONObject("sensorEffects");
-
-
         JSONObject gyroscopeEffects = sensorEffects.optJSONObject("gyroscope");
-
-        //gets all arrays of effects
         JSONArray xEffect = gyroscopeEffects.optJSONArray("x");
         JSONArray yEffect = gyroscopeEffects.optJSONArray("y");
         JSONArray zEffect = gyroscopeEffects.optJSONArray("z");
-        //for each axis we map the effects to the that axis
+        //for each axis map the effects to the that axis
         for(int i = 0; i < xEffect.length(); i++){
             setEffect((String) xEffect.opt(i), x);
         }
@@ -151,7 +142,7 @@ public class Synth {
             setEffect((String) zEffect.opt(i), z);
         }
     }
-
+    //handles the map
     private void setEffect(String effectName, float effectValue) {
         switch (effectName) {
             case "reverb": {
@@ -184,7 +175,6 @@ public class Synth {
             case "-filter": {
                 setFilter(-1*effectValue);
             }
-
         }
     }
 
@@ -219,7 +209,6 @@ public class Synth {
         return frequencies.optDouble(noteIndex);
     }
 
-
     public void resetEffects(){
         setFilter(0);
         setBitCrush(0);
@@ -229,7 +218,6 @@ public class Synth {
             setOscVoicesVolume(i, 0);
         }
     }
-
 
     // play() - takes in recorded audio data and plays it in a separate thread
     public void play(float[] data) {
@@ -264,4 +252,5 @@ public class Synth {
             Log.e("AudioTrack", "Failed to initialize AudioTrack");
         }
     }
+
 }
