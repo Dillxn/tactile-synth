@@ -1,7 +1,3 @@
-//
-// Created by Dillon on 4/22/2022.
-//
-
 #include "Osc.h"
 #include <math.h>
 #include <android/log.h>
