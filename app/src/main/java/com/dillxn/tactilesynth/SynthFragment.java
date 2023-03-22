@@ -45,6 +45,8 @@ public class SynthFragment extends Fragment implements SensorEventListener {
     Database db;
     User user;
 
+    View view;
+
     private SensorManager sensorManager;
     private final float[] rotationVector = new float[3];
     private final float[] accelerometerReading = new float[3];
@@ -106,7 +108,7 @@ public class SynthFragment extends Fragment implements SensorEventListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_synth, container, false);
+        view = inflater.inflate(R.layout.fragment_synth, container, false);
 
         Touchpad touchpad = view.findViewById(R.id.touchpad);
         touchpad.setOnTouchListener(new View.OnTouchListener() {
