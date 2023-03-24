@@ -33,10 +33,14 @@ public:
 
     void setFilter(double amount);
 
+    void setDelay(double amount);
+
+    void setTremolo(double amount);
+
 
 private:
     AAudioStream *stream_;
-    AudioGenerator audioMutator;
+    AudioGenerator audioGenerator;
     std::mutex recordedAudioDataMutex_;
     std::vector<float> recordedAudioData_;
 };

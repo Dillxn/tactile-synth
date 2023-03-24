@@ -63,7 +63,7 @@ bool AudioEngine::start() {
     AAudioStreamBuilder_setPerformanceMode(streamBuilder,
                                            AAUDIO_PERFORMANCE_MODE_LOW_LATENCY);
     AAudioStreamBuilder_setDataCallback(streamBuilder,
-                                        ::dataCallback, &audioMutator);
+                                        ::dataCallback, &audioGenerator);
     AAudioStreamBuilder_setErrorCallback(streamBuilder,
                                          ::errorCallback, this);
 
@@ -79,7 +79,7 @@ bool AudioEngine::start() {
 
     // retrieve sample rate of stream for osc
     int32_t sampleRate = AAudioStream_getSampleRate(stream_);
-    audioMutator.setSampleRate(sampleRate);
+    audioGenerator.setSampleRate(sampleRate);
     _sampleRate = sampleRate;
 
     // set buffer size
@@ -119,51 +119,59 @@ void AudioEngine::stop() {
 }
 
 void AudioEngine::toggleOsc(int oscId, bool isToneOn) {
-    audioMutator.toggleOsc(oscId, isToneOn);
+    audioGenerator.toggleOsc(oscId, isToneOn);
 }
 
 void AudioEngine::setOscFrequency(int oscId, double frequency) {
-    audioMutator.setOscFrequency(oscId, frequency);
+    audioGenerator.setOscFrequency(oscId, frequency);
 }
 
 void AudioEngine::setOscPhase(int oscId, double offset) {
-    audioMutator.setOscPhase(oscId, offset);
+    audioGenerator.setOscPhase(oscId, offset);
 }
 
 bool AudioEngine::isOscDown(int oscId) {
-    return audioMutator.isOscDown(oscId);
+    return audioGenerator.isOscDown(oscId);
 }
 
 void AudioEngine::setOscVoices(int oscId, int voices) {
-    audioMutator.setOscVoices(oscId, voices);
+    audioGenerator.setOscVoices(oscId, voices);
 }
 
 void AudioEngine::setOscSpread(int oscId, double spread) {
-    audioMutator.setOscSpread(oscId, spread);
+    audioGenerator.setOscSpread(oscId, spread);
 }
 
 void AudioEngine::setReverb(double reverb) {
-    audioMutator.setReverb(reverb);
+    audioGenerator.setReverb(reverb);
 }
 
 void AudioEngine::setOscVoicesVolume(int oscId, double volume) {
-    audioMutator.setOscVoicesVolume(oscId, volume);
+    audioGenerator.setOscVoicesVolume(oscId, volume);
 }
 
 void AudioEngine::setOscVolume(int oscId, double volume) {
-    audioMutator.setOscVolume(oscId, volume);
+    audioGenerator.setOscVolume(oscId, volume);
 }
 
 void AudioEngine::setOscAttack(int oscId, double amount) {
-    audioMutator.setOscAttack(oscId, amount);
+    audioGenerator.setOscAttack(oscId, amount);
 }
 
 void AudioEngine::setBitCrush(double amount) {
-    audioMutator.setBitCrush(amount);
+    audioGenerator.setBitCrush(amount);
 }
 
 void AudioEngine::setFilter(double amount) {
-    audioMutator.setFilter(amount);
+    audioGenerator.setFilter(amount);
+}
+
+void AudioEngine::setDelay(double amount) {
+    audioGenerator.setDelay(amount);
+}
+
+void AudioEngine::setTremolo(double amount) {
+    audioGenerator.setTremoloAmount((float) amount);
 }
 
 // starts collecting generated audio data
