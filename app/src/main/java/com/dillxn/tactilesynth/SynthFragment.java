@@ -71,7 +71,7 @@ public class SynthFragment extends Fragment implements SensorEventListener {
     ArrayList<Integer> xEffectList = new ArrayList<>();
     ArrayList<Integer> yEffectList = new ArrayList<>();
     ArrayList<Integer> zEffectList = new ArrayList<>();
-    String[] effectArray = {"reverb", "voices", "filter"};
+    String[] effectArray = {"reverb", "voices", "filter", "delay", "tremolo"};
 
     boolean debugMenuActive = false;
 
