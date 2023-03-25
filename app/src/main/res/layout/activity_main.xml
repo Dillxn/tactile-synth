@@ -24,6 +24,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias=".5" />
+        <Button
+            android:id="@+id/stopRecording"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:onClick="menuToggle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias=".5"
+            android:layout_marginRight="380sp"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

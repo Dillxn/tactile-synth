@@ -22,51 +22,12 @@ import java.util.ArrayList;
 
 import org.json.JSONArray;
 
+//add red button, top bar left side, to stop recording.
+//start the recording when the user begins to touch the screen
+//for now just play the recording, eventually save it after they are done.
 public class PlaybackHandler {
-    private ArrayList<float[]> floatRecordings = new ArrayList<>();
-    String SAVE_DIR = "/recordings";//might need to be more specific
+
     public PlaybackHandler() {
 
     }
-
-    public void loadRecordings(){
-        //consider flushing the tracks and byte arrays and use this after each time is deleted.
-        File directory = new File(SAVE_DIR);
-        if(directory.exists() && directory.isDirectory()){
-            File[] files = directory.listFiles();
-            for(File file : files){
-                byte[] temp = new byte[BUFFER_SIZE];
-                try {
-                    FileInputStream input = new FileInputStream(file);
-                    input.read(temp);
-                }catch(IOException e){
-                    System.out.println(e);
-                }
-            }
-        }
-
-    }
-    public void saveRecording(){
-        if(newRecording != null){
-            FileOutputStream outputStream = null;
-            try{
-                //write byte[] to new file at /recordings/recordingX where X is the number of recordings
-                //flush newRecording
-                outputStream = new FileOutputStream(SAVE_DIR + "/recording" + tracks.size());
-                outputStream.write(newRecording);
-                outputStream.close();
-                AudioTrack loadedTrack = new AudioTrack(STREAM_TYPE, SAMPLING_RATE, CHANNEL_CONFIG, AUDIO_FORMAT, newRecording.length, MODE);
-                tracks.add(loadedTrack);
-                byteRecordings.add(newRecording);
-                newRecording = null;
-            }catch(IOException e){
-                System.out.println(e);
-            }
-        }
-        return;
-    }
-
-
-
-
 }
