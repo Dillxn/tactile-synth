@@ -101,4 +101,10 @@ public class MainActivity extends FragmentActivity {
             }
         }
     }
+
+    public void stopRecording(View view){
+        System.out.println("STOPPED RECORDING");
+        //TODO: stop the recording, send the data to the PLaybackHandler
+        //
+    }
 }

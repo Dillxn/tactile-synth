@@ -258,39 +258,4 @@ public class Synth {
             Log.e("AudioTrack", "Failed to initialize AudioTrack");
         }
     }
-
-    //from the activity pass in the argument getApplicationContext().getFilesDir() as the path
-    public void save(File path,String fileName, float[] data){
-      try{
-          FileOutputStream writer =  new FileOutputStream(new File(path, fileName));
-          DataOutputStream output = new DataOutputStream(writer);
-          for(float value : data){
-              output.writeFloat(value);
-          }
-          output.close();
-          writer.close();
-      } catch(Exception e){
-          System.out.println("Error in saving files");
-      }
-    }
-    public float[] load(File file){
-        try{
-            FileInputStream inputFile = new FileInputStream(file);
-            DataInputStream input = new DataInputStream(inputFile);
-            int numFloats = (int)(input.available()/4);
-            float[] data = new float[numFloats];
-
-            for(int i = 0; i <numFloats; i++){
-                data[i] = input.readFloat();
-            }
-            inputFile.close();
-            input.close();
-            return data;
-
-        }catch(Exception e){
-            System.out.println("Error in loading file");
-        }
-        return null;
-    }
-
 }
