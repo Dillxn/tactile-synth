@@ -5,25 +5,20 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MenuFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class MenuFragment extends Fragment {
     FragmentManager fragmentManager;
     SynthFragment synthFrag;
-
     View view;
+    Button button;
+
+    Database db;
 
     public MenuFragment() {
         // Required empty public constructor
@@ -41,6 +36,7 @@ public class MenuFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_menu, container, false);
         synthFrag = (SynthFragment) fragmentManager.findFragmentByTag("synthPrime");
 
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_menu, container, false);
     }
@@ -48,6 +44,8 @@ public class MenuFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        db = ((MainActivity) getActivity()).getDb();
 
         // GRABBING MENU BUTTONS AND MENU LAYOUTS
         Button[] menuButtons = {(Button) view.findViewById(R.id.settingsBtn),
@@ -62,6 +60,8 @@ public class MenuFragment extends Fragment {
 
         // SET UP LISTENERS FOR MENU BUTTONS
         setMenuListeners(menuButtons, menus);
+        setSettingsListeners();
+        updateMenu();
     }
 
     public void setMenuListeners(Button[] menuButtons, LinearLayout[] menus){
@@ -76,6 +76,24 @@ public class MenuFragment extends Fragment {
         }
     }
 
+    public void setSettingsListeners(){
+        button = getView().findViewById(R.id.debug);
+        button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                toggleDebug();
+            }
+        });
+
+        button = getView().findViewById(R.id.grid);
+        button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                toggleGrid();
+            }
+        });
+    }
+
     public void menuChange(LinearLayout [] menus, int x){
         for (int i = 0; i < 4; i++){
             if(i == x){
@@ -83,6 +101,30 @@ public class MenuFragment extends Fragment {
             } else {
                 menus[i].setVisibility(View.GONE);
             }
+        }
+    }
+    public void toggleDebug(){
+        db.setDebug(!db.getDebug());
+        updateMenu();
+    }
+
+    public void toggleGrid(){
+        db.setGrid(!db.getGrid());
+        updateMenu();
+    }
+    public void updateMenu(){
+        button = getView().findViewById(R.id.debug);
+        if (db.getDebug()){
+            button.setText("Debug Enabled");
+        } else {
+            button.setText("Debug Disabled");
+        }
+
+        button = getView().findViewById(R.id.grid);
+        if (db.getGrid()){
+            button.setText("Grid Enabled");
+        } else {
+            button.setText("Grid Disabled");
         }
     }
 }
