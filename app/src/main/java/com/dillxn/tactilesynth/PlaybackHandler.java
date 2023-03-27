@@ -49,6 +49,7 @@ public class PlaybackHandler {
     File dirPath;
     File recordingsBase;
     File recordingsFolderFile;
+    int count = 0;
     String defaultFileName = "recording";
     int totalRecordings = 0;
 
@@ -60,17 +61,17 @@ public class PlaybackHandler {
             recordingsBase = new File(dirPath, "recording");
             //if the dir path + "recording" exists.
             if(recordingsBase.exists()){
-                createCount();
                 recordingsFolderFile = new File(recordingsBase, "recordings");
                 if(!recordingsFolderFile.exists()){
                     System.out.println("Somehow recordingsFolderFile does not exist");
                 }
+                loadAll();
+                updateCount();
 
             }else{//what happens if recordings base does not exist
                 Boolean isCreated = recordingsBase.mkdir();
                 if(isCreated){
                     System.out.println("recordingsBase created");
-                    createCount();
                     //since recordingsbase is good now create the recordings folder
                     recordingsFolderFile = new File(recordingsBase, "recordings");
                     Boolean isRecordingsCreated = recordingsFolderFile.mkdir();
@@ -82,82 +83,77 @@ public class PlaybackHandler {
                 }else{
                     System.out.println("failed to create recordingsBase");
                 }
+                updateCount();
             }
         }
-
-    }
-    private void createCount(){
-        File countFile = new File(recordingsBase, "count.txt");
-        //look for count.txt and if it exists get it's value
-        if(countFile.exists()){
-            try{
-                Scanner sc = new Scanner(countFile);
-                totalRecordings = sc.nextInt();
-                sc.close();
-            }catch(Exception e){
-                System.out.println("Error creating scanner on countFile");
-                System.out.println(e.getMessage());
-            }
-        }else{
-            try{
-                countFile.createNewFile();
-                PrintWriter pr = new PrintWriter(countFile);
-                pr.println("0");
-                pr.close();
-            }catch(Exception ex){
-                System.out.println("Error - creating count.txt");
-                System.out.println(ex.getMessage());
-            }
+        //WILL DELETE ALL RECORDINGS IF UNCOMMENTED, TESTING PURPOSES
+        for(File f : recordingsFolderFile.listFiles()){
+            f.delete();
         }
+    System.out.println("Stop point");
     }
-
     private void updateCount(){
-        try{
-            File count = new File(recordingsBase, "count.txt");
-            File temp = new File(recordingsBase, "temp.txt");
-            PrintWriter pw = new PrintWriter(temp);
-            pw.write(totalRecordings);
-            pw.close();
-
-            count.delete();
-            temp.renameTo(count);
-        }catch(Exception e){
-            System.out.println("ERROR - in updating files");
-            System.out.println(e.getMessage());
+        int largestCount = 0;
+        for(File file : recordingsFolderFile.listFiles()){
+            String name = file.getName();
+            int temp = getFileNumber(name);
+            if(temp > largestCount){
+                largestCount = temp;
+            }
         }
+        count = largestCount+1;
     }
-
+    private int getFileNumber(String s){
+        return Integer.valueOf(s.substring(9,s.length()-4));
+    }
 
     //from the activity pass in the argument getApplicationContext().getFilesDir() as the path
     public void save(float[] data){
         File file = new File(recordingsFolderFile, (defaultFileName + totalRecordings++ + ".bin"));
-        try{
-            file.createNewFile();
-            FileOutputStream writer =  new FileOutputStream(file);
-            DataOutputStream output = new DataOutputStream(writer);
-            for(float value : data){
-                output.writeFloat(value);
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            DataOutputStream dataOutputStream = new DataOutputStream(fileOutputStream);
+            for (float f : data) {
+                dataOutputStream.writeFloat(f);
             }
-            output.close();
-            writer.close();
-            System.out.println("Saved recording: " + totalRecordings);
-        } catch(Exception e){
-            System.out.println("Error in saving files");
-            System.out.println("--------");
+            dataOutputStream.close();
+            fileOutputStream.close();
+        }catch(Exception e) {
+            System.out.println("ERROR IN SAVING");
             System.out.println(e.getMessage());
-            System.out.println("--------");
-
         }
     }
 
     public void saveAll(){
         for(float[] recording : newRecordings){
             save(recording);
-            updateCount();
         }
     }
     public float[] load(File file){
-        try{
+        ArrayList<Float> fileArray = new ArrayList<>();
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            DataInputStream dataInputStream = new DataInputStream(fileInputStream);
+
+            boolean notDone = true;
+            while(notDone){
+                try{
+                    fileArray.add(dataInputStream.readFloat());
+                }catch(Exception e){
+                    notDone = false;
+                }
+            }
+            dataInputStream.close();
+        }catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+        float[] ret = new float[fileArray.size()];
+        for(int i = 0; i < fileArray.size(); i++){
+            ret[i] = fileArray.get(i);
+        }
+        return ret;
+
+        /*try{
             FileInputStream inputFile = new FileInputStream(file);
             DataInputStream input = new DataInputStream(inputFile);
             int numFloats = (int)(input.available()/4);
@@ -173,24 +169,27 @@ public class PlaybackHandler {
         }catch(Exception e){
             System.out.println("Error in loading file");
         }
-        return null;
+        return null;*/
     }
     public void loadAll(){
         File[] files = recordingsFolderFile.listFiles();
         for(File f : files){
-            newRecordings.add(load(f));
+            recordings.add(load(f));
         }
-    }
-
-
-    public void close(){
-        updateCount();
     }
 
     public void addRecording(){
         stopRecord();
         float[] temp = getRecordedAudioData();
+        recordings.add(temp);
         save(temp);
+    }
+    public void startRecording(){
+        startRecord();
+
+        /*for(float[] f : recordings){
+            play(f);
+        }*/
     }
 
     public void play(float[] data) {

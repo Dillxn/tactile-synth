@@ -69,7 +69,6 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        playback.close();
     }
 
 
@@ -114,11 +113,12 @@ public class MainActivity extends FragmentActivity {
     public void stopRecording(View view){
         System.out.println("STOPPED RECORDING");
         playback.addRecording();
-        for(float[] test : playback.newRecordings){
-            playback.play(test);
-        }
         for(float[] test : playback.recordings){
             playback.play(test);
         }
+    }
+    public void startRecording(View viw){
+        System.out.println("START RECORDING");
+        playback.startRecording();
     }
 }
