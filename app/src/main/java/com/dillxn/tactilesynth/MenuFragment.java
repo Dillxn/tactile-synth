@@ -50,55 +50,39 @@ public class MenuFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // GRABBING MENU BUTTONS AND MENU LAYOUTS
-        Button settingsButton = (Button) view.findViewById(R.id.settingsBtn);
-        Button tuningButton = (Button) view.findViewById(R.id.tuningBtn);
-        Button recordingButton = (Button) view.findViewById(R.id.recordingBtn);
-        Button effectsButton = (Button) view.findViewById(R.id.effectsBtn);
+        Button[] menuButtons = {(Button) view.findViewById(R.id.settingsBtn),
+                                (Button) view.findViewById(R.id.tuningBtn),
+                                (Button) view.findViewById(R.id.recordingBtn),
+                                (Button) view.findViewById(R.id.effectsBtn)};
 
-        LinearLayout settingsMenu = (LinearLayout) view.findViewById(R.id.settings_menu);
-        LinearLayout tuningMenu = (LinearLayout) view.findViewById(R.id.tuning_menu);
-        LinearLayout effectsMenu = (LinearLayout) view.findViewById(R.id.effects_menu);
-        LinearLayout recordingMenu = (LinearLayout) view.findViewById(R.id.recording_menu);
+        LinearLayout[] menus = {(LinearLayout) view.findViewById(R.id.settings_menu),
+                                (LinearLayout) view.findViewById(R.id.tuning_menu),
+                                (LinearLayout) view.findViewById(R.id.recording_menu),
+                                (LinearLayout) view.findViewById(R.id.effects_menu)};
 
         // SET UP LISTENERS FOR MENU BUTTONS
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                settingsMenu.setVisibility(View.VISIBLE);
-                tuningMenu.setVisibility(View.GONE);
-                effectsMenu.setVisibility(View.GONE);
-                recordingMenu.setVisibility(View.GONE);
-            }
-        });
+        setMenuListeners(menuButtons, menus);
+    }
 
-        tuningButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                settingsMenu.setVisibility(View.GONE);
-                tuningMenu.setVisibility(View.VISIBLE);
-                effectsMenu.setVisibility(View.GONE);
-                recordingMenu.setVisibility(View.GONE);
-            }
-        });
+    public void setMenuListeners(Button[] menuButtons, LinearLayout[] menus){
+        for (int i = 0; i < 4; i++){
+            int finalI = i;
+            menuButtons[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    menuChange(menus, finalI);
+                }
+            });
+        }
+    }
 
-        recordingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                settingsMenu.setVisibility(View.GONE);
-                tuningMenu.setVisibility(View.GONE);
-                effectsMenu.setVisibility(View.GONE);
-                recordingMenu.setVisibility(View.VISIBLE);
+    public void menuChange(LinearLayout [] menus, int x){
+        for (int i = 0; i < 4; i++){
+            if(i == x){
+                menus[i].setVisibility(View.VISIBLE);
+            } else {
+                menus[i].setVisibility(View.GONE);
             }
-        });
-
-        effectsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                settingsMenu.setVisibility(View.GONE);
-                tuningMenu.setVisibility(View.GONE);
-                effectsMenu.setVisibility(View.VISIBLE);
-                recordingMenu.setVisibility(View.GONE);
-            }
-        });
+        }
     }
 }

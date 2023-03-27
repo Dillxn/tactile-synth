@@ -3,6 +3,9 @@ package com.dillxn.tactilesynth;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -71,7 +74,7 @@ public class SynthFragment extends Fragment implements SensorEventListener {
     ArrayList<Integer> xEffectList = new ArrayList<>();
     ArrayList<Integer> yEffectList = new ArrayList<>();
     ArrayList<Integer> zEffectList = new ArrayList<>();
-    String[] effectArray = {"reverb", "voices", "filter"};
+    String[] effectArray = {"reverb", "voices", "filter", "delay", "tremolo"};
 
     boolean debugMenuActive = false;
 
@@ -168,6 +171,16 @@ public class SynthFragment extends Fragment implements SensorEventListener {
     public void onStart() {
         super.onStart();
         updateSettings();
+        Canvas synthArea = new Canvas();
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setStrokeWidth(1f);
+
+        synthArea.drawLine(25,25,250,250, paint);
+    }
+
+    private void init(){
+
     }
 
     @Override
