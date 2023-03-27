@@ -2,6 +2,7 @@ package com.dillxn.tactilesynth;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.media.AudioAttributes;
 import android.media.MediaRecorder;
 import android.media.AudioTrack;
 import android.media.AudioFormat;
@@ -9,6 +10,7 @@ import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.content.Context;
 import android.app.Activity;
+import android.util.Log;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -33,9 +35,19 @@ import org.json.JSONArray;
 //TODO: use the playbackhandler to show the recordings and do other stuff with.
 
 public class PlaybackHandler {
+    static {
+        System.loadLibrary("tactilesynth");
+    }
+    public native void startRecord();
+    public native void stopRecord();
+    public native float[] getRecordedAudioData();
+    public native int getSampleRate();
+    public native int getBufferSize();
+
     ArrayList<float[]> recordings = new ArrayList<>();
     ArrayList<float[]> newRecordings = new ArrayList<>();
     File dirPath;
+    File recordingsBase;
     File recordingsFolderFile;
     String defaultFileName = "recording";
     int totalRecordings = 0;
@@ -43,35 +55,66 @@ public class PlaybackHandler {
 
     public PlaybackHandler(File dirPath) {
         this.dirPath = dirPath;
-        this.recordingsFolderFile = new File(dirPath, "recordings/recordings");
-        if(!recordingsFolderFile.exists()){
-            boolean isDirectoryCreated = recordingsFolderFile.mkdir();
+        //if the dirPath exists
+        if(this.dirPath.exists()){
+            recordingsBase = new File(dirPath, "recording");
+            //if the dir path + "recording" exists.
+            if(recordingsBase.exists()){
+                createCount();
+                recordingsFolderFile = new File(recordingsBase, "recordings");
+                if(!recordingsFolderFile.exists()){
+                    System.out.println("Somehow recordingsFolderFile does not exist");
+                }
 
-            if (isDirectoryCreated) {
-                System.out.println("--- Directory created successfully. ---");
-            } else {
-                System.out.println("--- Failed to create directory. ---");
+            }else{//what happens if recordings base does not exist
+                Boolean isCreated = recordingsBase.mkdir();
+                if(isCreated){
+                    System.out.println("recordingsBase created");
+                    createCount();
+                    //since recordingsbase is good now create the recordings folder
+                    recordingsFolderFile = new File(recordingsBase, "recordings");
+                    Boolean isRecordingsCreated = recordingsFolderFile.mkdir();
+                    if(isRecordingsCreated){
+                        System.out.println("recordingsFolderFile created");
+                    }else{
+                        System.out.println("failed to create recordingsFolderFile");
+                    }
+                }else{
+                    System.out.println("failed to create recordingsBase");
+                }
             }
         }
-        try{
-            Scanner countFile = new Scanner(new File(new File(dirPath, "recordings"), "count.txt"));
-            totalRecordings = countFile.nextInt();
-            countFile.close();
-        }catch(Exception e){
-            System.out.println("ERROR - in loading count file.");
-            File count = new File(recordingsFolderFile, "count.txt");
+
+    }
+    private void createCount(){
+        File countFile = new File(recordingsBase, "count.txt");
+        //look for count.txt and if it exists get it's value
+        if(countFile.exists()){
             try{
-                count.createNewFile();
+                Scanner sc = new Scanner(countFile);
+                totalRecordings = sc.nextInt();
+                sc.close();
+            }catch(Exception e){
+                System.out.println("Error creating scanner on countFile");
+                System.out.println(e.getMessage());
+            }
+        }else{
+            try{
+                countFile.createNewFile();
+                PrintWriter pr = new PrintWriter(countFile);
+                pr.println("0");
+                pr.close();
             }catch(Exception ex){
-                System.out.println("File count.txt already exists.");
+                System.out.println("Error - creating count.txt");
+                System.out.println(ex.getMessage());
             }
         }
     }
 
     private void updateCount(){
         try{
-            File count = new File(new File(dirPath, "recordings"), "count.txt");
-            File temp = new File(new File(dirPath, "recordings"), "temp.txt");
+            File count = new File(recordingsBase, "count.txt");
+            File temp = new File(recordingsBase, "temp.txt");
             PrintWriter pw = new PrintWriter(temp);
             pw.write(totalRecordings);
             pw.close();
@@ -80,22 +123,30 @@ public class PlaybackHandler {
             temp.renameTo(count);
         }catch(Exception e){
             System.out.println("ERROR - in updating files");
+            System.out.println(e.getMessage());
         }
     }
 
 
     //from the activity pass in the argument getApplicationContext().getFilesDir() as the path
     public void save(float[] data){
+        File file = new File(recordingsFolderFile, (defaultFileName + totalRecordings++ + ".bin"));
         try{
-            FileOutputStream writer =  new FileOutputStream(new File(recordingsFolderFile, (defaultFileName + totalRecordings++ + ".bin")));
+            file.createNewFile();
+            FileOutputStream writer =  new FileOutputStream(file);
             DataOutputStream output = new DataOutputStream(writer);
             for(float value : data){
                 output.writeFloat(value);
             }
             output.close();
             writer.close();
+            System.out.println("Saved recording: " + totalRecordings);
         } catch(Exception e){
             System.out.println("Error in saving files");
+            System.out.println("--------");
+            System.out.println(e.getMessage());
+            System.out.println("--------");
+
         }
     }
 
@@ -134,5 +185,44 @@ public class PlaybackHandler {
 
     public void close(){
         updateCount();
+    }
+
+    public void addRecording(){
+        stopRecord();
+        float[] temp = getRecordedAudioData();
+        save(temp);
+    }
+
+    public void play(float[] data) {
+        final int sampleRate = getSampleRate();
+
+        final int channelConfig = AudioFormat.CHANNEL_OUT_MONO;
+        final int audioFormat = AudioFormat.ENCODING_PCM_FLOAT;
+        final int bufferSize = getBufferSize();
+        final AudioTrack audioTrack = new AudioTrack.Builder()
+                .setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build())
+                .setAudioFormat(new AudioFormat.Builder()
+                        .setEncoding(audioFormat)
+                        .setSampleRate(sampleRate)
+                        .setChannelMask(channelConfig)
+                        .build())
+                .setBufferSizeInBytes(bufferSize)
+                .build();
+
+        if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+            new Thread(new Runnable() {
+                public void run() {
+                    audioTrack.play();
+                    audioTrack.write(data, 0, data.length, AudioTrack.WRITE_BLOCKING);
+                    audioTrack.stop();
+                    audioTrack.release();
+                }
+            }).start();
+        } else {
+            Log.e("AudioTrack", "Failed to initialize AudioTrack");
+        }
     }
 }

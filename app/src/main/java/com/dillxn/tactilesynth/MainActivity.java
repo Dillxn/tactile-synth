@@ -32,6 +32,8 @@ public class MainActivity extends FragmentActivity {
     VideoView background;
 
     Button menuButton;
+
+    PlaybackHandler playback;
     boolean menu = false;
     boolean debugActive = false;
 
@@ -60,7 +62,14 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+        playback = new PlaybackHandler(getApplicationContext().getFilesDir());
+
         fragmentManager.beginTransaction().replace(R.id.fragmentContainerView, SynthFragment.class, null , "synthPrime").commit();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        playback.close();
     }
 
 
@@ -104,7 +113,12 @@ public class MainActivity extends FragmentActivity {
 
     public void stopRecording(View view){
         System.out.println("STOPPED RECORDING");
-        //TODO: stop the recording, send the data to the PLaybackHandler
-        //
+        playback.addRecording();
+        for(float[] test : playback.newRecordings){
+            playback.play(test);
+        }
+        for(float[] test : playback.recordings){
+            playback.play(test);
+        }
     }
 }

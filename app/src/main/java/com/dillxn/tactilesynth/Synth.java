@@ -2,6 +2,8 @@ package com.dillxn.tactilesynth;
 
 import static java.lang.Math.min;
 
+import android.app.Activity;
+import android.content.Context;
 import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioTrack;
