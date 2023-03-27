@@ -6,8 +6,11 @@
 
 #include "Osc.h"
 #include "MVerb.h"
+#include <vector>
+#include <cmath>
 
-class AudioGenerator {
+class AudioGenerator
+{
 public:
     AudioGenerator();
 
@@ -39,6 +42,10 @@ public:
 
     void setFilter(double amount);
 
+    void setDelay(double amount);
+
+    void setTremoloAmount(float amount);
+
 private:
     Osc oscillators_[MAX_OSCILLATORS];
     int oscCount_;
@@ -57,7 +64,18 @@ private:
     double clipperThreshold_ = .5;
     float lowPassAmount_ = 0;
     float highPassAmount_ = 0;
+
+    double delayAmount_ = 0;
+
+    int32_t sampleRate_ = 0;
+
+    std::vector<float> delayBuffer_;
+    int delayBufferSize_;
+    int delayWritePos_;
+    int delayReadPos_;
+    int delayTime_;
+    float tremoloAmount_;
+    float tremoloPhase_;
 };
 
-
-#endif //TACTILESYNTH_AUDIOGENERATOR_H
+#endif // TACTILESYNTH_AUDIOGENERATOR_H
