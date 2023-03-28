@@ -31,9 +31,8 @@ public class MainActivity extends FragmentActivity {
 
     VideoView background;
 
-    Button menuButton;
+    Database db;
     boolean menu = false;
-    boolean debugActive = false;
 
     float maxX = 0;
     float maxY = 0;
@@ -42,7 +41,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        db = new Database(this);
         // set up UI
         setContentView(R.layout.activity_main);
         // make fullscreen
@@ -62,7 +61,6 @@ public class MainActivity extends FragmentActivity {
 
         fragmentManager.beginTransaction().replace(R.id.fragmentContainerView, SynthFragment.class, null , "synthPrime").commit();
     }
-
 
     /* JOSH - ENABLES AND DISABLES THE DEBUG UI */
     public void menuToggle(View layout){
@@ -87,18 +85,8 @@ public class MainActivity extends FragmentActivity {
             }
         }
     }
-
-    // JOSH - USED TO SET SYNTH DEBUG TO TRUE OR FALSE
-    public void toggleDebug(View view){
-        SynthFragment fragment = (SynthFragment) fragmentManager.findFragmentByTag("synthPrime");
-        Button button = view.findViewById(R.id.debug);
-        if(fragment != null){
-            fragment.toggleDebug();
-            if (fragment.debugMenuActive) {
-                button.setText("Activate Debug");
-            } else {
-                button.setText("Deactivate Debug");
-            }
-        }
+    // JOSH - PASSES DB TO FRAGMENTS
+    public Database getDb(){
+        return db;
     }
 }

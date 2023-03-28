@@ -61,7 +61,9 @@
           "y": ["reverb"],
           "z": ["filter"]
         }
-      }
+      },
+      "gridState": false,
+      "debugState": false
     }
   ]
 }

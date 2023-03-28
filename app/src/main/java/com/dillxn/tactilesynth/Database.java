@@ -46,8 +46,6 @@ public class Database {
         } catch (IOException | JSONException ex) {
             ex.printStackTrace();
         }
-
-
     }
 
     // init() - loads default db and saves it to internal storage
@@ -109,4 +107,41 @@ public class Database {
         // return it
         return preset;
     }
+
+    public boolean getDebug(){
+        boolean state = false;
+        try {
+            state = this.getPreset().getBoolean("debugState");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return state;
+    }
+
+    public void setDebug(boolean state){
+        try {
+            this.getPreset().put("debugState", state);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean getGrid(){
+        boolean state = false;
+        try {
+            state = this.getPreset().getBoolean("gridState");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return state;
+    }
+
+    public void setGrid(boolean state){
+        try {
+            this.getPreset().put("gridState", state);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
