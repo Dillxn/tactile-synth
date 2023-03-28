@@ -9,13 +9,23 @@ import androidx.fragment.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MenuFragment extends Fragment {
     FragmentManager fragmentManager;
     SynthFragment synthFrag;
-    View view;
     Button button;
 
     Database db;
@@ -33,9 +43,6 @@ public class MenuFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_menu, container, false);
-        synthFrag = (SynthFragment) fragmentManager.findFragmentByTag("synthPrime");
-
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_menu, container, false);
@@ -58,11 +65,20 @@ public class MenuFragment extends Fragment {
                                 (LinearLayout) view.findViewById(R.id.recording_menu),
                                 (LinearLayout) view.findViewById(R.id.effects_menu)};
 
+        // POPULATE AND STYLE TUNING MENU SPINNERS
+        Spinner scaleSpinner = (Spinner) view.findViewById(R.id.scaleSpinner);
+        scaleSpinner.setAdapter(new ArrayAdapter<String>(getActivity(), R.layout.color_spinner_layout, db.getScales()));
+
+        Spinner keySpinner = (Spinner) view.findViewById(R.id.keySpinner);
+        keySpinner.setAdapter(new ArrayAdapter<String>(getActivity(), R.layout.color_spinner_layout, db.getKeys()));
+
         // SET UP LISTENERS FOR MENU BUTTONS
         setMenuListeners(menuButtons, menus);
         setSettingsListeners();
         updateMenu();
     }
+
+
 
     public void setMenuListeners(Button[] menuButtons, LinearLayout[] menus){
         for (int i = 0; i < 4; i++){
@@ -92,6 +108,19 @@ public class MenuFragment extends Fragment {
                 toggleGrid();
             }
         });
+
+        for (int i = 1; i < 8; i++){
+            String barID = "tuningMenu_freqBar"+i;
+            String textID = "tuningMenu_freqText"+i;
+
+            int barRes = getResources().getIdentifier(barID,"id", getActivity().getPackageName());
+            int textRes = getResources().getIdentifier(textID,"id", getActivity().getPackageName());
+
+            SeekBar seekBar = getView().findViewById(barRes);
+            TextView textView = getView().findViewById(textRes);
+
+            setFreqBarListeners(seekBar, textView, i);
+        }
     }
 
     public void menuChange(LinearLayout [] menus, int x){
@@ -103,15 +132,16 @@ public class MenuFragment extends Fragment {
             }
         }
     }
+
     public void toggleDebug(){
         db.setDebug(!db.getDebug());
         updateMenu();
     }
-
     public void toggleGrid(){
         db.setGrid(!db.getGrid());
         updateMenu();
     }
+
     public void updateMenu(){
         button = getView().findViewById(R.id.debug);
         if (db.getDebug()){
@@ -126,5 +156,52 @@ public class MenuFragment extends Fragment {
         } else {
             button.setText("Grid Disabled");
         }
+        updateFreqs();
+    }
+
+    public void updateFreqs(){
+        for (int i = 1; i < 8; i++) {
+            String barID = "tuningMenu_freqBar" + i;
+            String textID = "tuningMenu_freqText" + i;
+
+            int barRes = getResources().getIdentifier(barID, "id", getActivity().getPackageName());
+            int textRes = getResources().getIdentifier(textID, "id", getActivity().getPackageName());
+
+            SeekBar seekBar = getView().findViewById(barRes);
+            TextView textView = getView().findViewById(textRes);
+
+            try {
+                textView.setText(db.getPreset().optJSONArray("frequencies").getDouble(i - 1) + "hz");
+                seekBar.setProgress((int) (db.getPreset().optJSONArray("frequencies").getDouble(i - 1) * 100));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void setFreqBarListeners(SeekBar bar, TextView text, int index){
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+                text.setText(new Float(bar.getProgress())/100 + "hz");
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                try {
+                    db.getPreset().optJSONArray("frequencies").put(index-1,new Double(seekBar.getProgress())/100);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 }
