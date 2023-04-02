@@ -11,12 +11,19 @@ import androidx.fragment.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import org.xmlpull.v1.XmlPullParser;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link MenuFragment#newInstance} factory method to
+ * Use the {@link MenuFragment newInstance} factory method to
  * create an instance of this fragment.
  */
 public class MenuFragment extends Fragment {
@@ -25,8 +32,13 @@ public class MenuFragment extends Fragment {
 
     View view;
 
+    ArrayList<float[]> recordings = null;
+
     public MenuFragment() {
         // Required empty public constructor
+    }
+    public void updateRecordings(ArrayList<float []> recordings) {
+        this.recordings = recordings;
     }
 
     @Override
@@ -40,6 +52,7 @@ public class MenuFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_menu, container, false);
         synthFrag = (SynthFragment) fragmentManager.findFragmentByTag("synthPrime");
+        //get the recordings from the playback handler
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_menu, container, false);
@@ -59,6 +72,11 @@ public class MenuFragment extends Fragment {
         LinearLayout tuningMenu = (LinearLayout) view.findViewById(R.id.tuning_menu);
         LinearLayout effectsMenu = (LinearLayout) view.findViewById(R.id.effects_menu);
         LinearLayout recordingMenu = (LinearLayout) view.findViewById(R.id.recording_menu);
+        ListView recordingList = (ListView) view.findViewById(R.id.recording_list);
+        //somehow figure out how to update the listview with the recordings. or figure out another system to make it interactable
+        ArrayList<float[]> recordings = ((MainActivity) getActivity()).playback.getRecordings();
+        RecordingsAdapter adapter = new RecordingsAdapter(getActivity(), recordings);
+        recordingList.setAdapter(adapter);
 
         // SET UP LISTENERS FOR MENU BUTTONS
         settingsButton.setOnClickListener(new View.OnClickListener() {

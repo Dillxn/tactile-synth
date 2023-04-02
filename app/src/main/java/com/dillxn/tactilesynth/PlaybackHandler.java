@@ -90,7 +90,10 @@ public class PlaybackHandler {
         for(File f : recordingsFolderFile.listFiles()){
             f.delete();
         }
-    System.out.println("Stop point");
+        //solid break point
+    }
+    public ArrayList<float[]> getRecordings(){
+        return recordings;
     }
     private void updateCount(){
         int largestCount = 0;
@@ -152,24 +155,7 @@ public class PlaybackHandler {
             ret[i] = fileArray.get(i);
         }
         return ret;
-
-        /*try{
-            FileInputStream inputFile = new FileInputStream(file);
-            DataInputStream input = new DataInputStream(inputFile);
-            int numFloats = (int)(input.available()/4);
-            float[] data = new float[numFloats];
-
-            for(int i = 0; i <numFloats; i++){
-                data[i] = input.readFloat();
-            }
-            inputFile.close();
-            input.close();
-            return data;
-
-        }catch(Exception e){
-            System.out.println("Error in loading file");
-        }
-        return null;*/
+        
     }
     public void loadAll(){
         File[] files = recordingsFolderFile.listFiles();

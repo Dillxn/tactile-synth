@@ -33,7 +33,7 @@ public class MainActivity extends FragmentActivity {
 
     Button menuButton;
 
-    PlaybackHandler playback;
+    public static PlaybackHandler playback;
     boolean menu = false;
     boolean debugActive = false;
 
@@ -76,7 +76,10 @@ public class MainActivity extends FragmentActivity {
     public void menuToggle(View layout){
         FragmentTransaction fTransaction = fragmentManager.beginTransaction();
         Fragment synthFragment = fragmentManager.findFragmentByTag("synthPrime");
-        Fragment menuFragment = fragmentManager.findFragmentByTag("optionsPrime");
+        Fragment menuFragment = (MenuFragment) fragmentManager.findFragmentByTag("optionsPrime");
+        if (menuFragment != null){
+            ((MenuFragment) menuFragment).updateRecordings(playback.recordings);
+        }
 
         if(!menu) {
             fragmentManager.beginTransaction()
