@@ -26,9 +26,7 @@ import java.util.List;
 
 public class MenuFragment extends Fragment {
     FragmentManager fragmentManager;
-    SynthFragment synthFrag;
     Button button;
-
     Database db;
     User user;
 
@@ -46,8 +44,7 @@ public class MenuFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Inflate the layout for this fragment
-        return view ;
+        return inflater.inflate(R.layout.fragment_menu, container, false);
     }
 
     @Override

@@ -42,7 +42,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = new Database(this);
+        db = Database.getInstance(this);
         user = new User(db);
         // set up UI
         setContentView(R.layout.activity_main);
