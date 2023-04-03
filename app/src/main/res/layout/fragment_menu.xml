@@ -372,11 +372,10 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <TextView
-            android:id="@+id/textView3"
+        <com.dillxn.tactilesynth.EffectsMenuView
+            android:id="@+id/effects_menu_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="This is a placeholder for the effects menu screen." />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout

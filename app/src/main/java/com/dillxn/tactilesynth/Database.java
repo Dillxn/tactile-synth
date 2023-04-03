@@ -14,11 +14,30 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Database {
+    private static Database instance;
+    
     private String fileName = "db.json";
     private File dbFile;
     private JSONObject model;
     Context context;
+    
+    // Method to get the singleton instance of the Database class
+    public static synchronized Database getInstance(Context context) {
+        if (instance == null) {
+            instance = new Database(context.getApplicationContext());
+        }
+        return instance;
+    }
+    
+    // Method to get the singleton instance of the Database class
+    public static synchronized Database getInstance() {
+        if (instance == null) {
+            throw new RuntimeException("Database not initialized");
+        }
+        return instance;
+    }
 
     public Database(Context context) {
         // load custom db from internal storage
