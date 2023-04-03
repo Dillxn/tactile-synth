@@ -32,6 +32,7 @@ public class MainActivity extends FragmentActivity {
     VideoView background;
 
     Database db;
+    User user;
     boolean menu = false;
 
     float maxX = 0;
@@ -42,6 +43,7 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = new Database(this);
+        user = new User(db);
         // set up UI
         setContentView(R.layout.activity_main);
         // make fullscreen
@@ -89,4 +91,6 @@ public class MainActivity extends FragmentActivity {
     public Database getDb(){
         return db;
     }
+
+    public User getUser() {return user;}
 }

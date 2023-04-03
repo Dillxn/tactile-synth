@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -29,6 +30,7 @@ public class MenuFragment extends Fragment {
     Button button;
 
     Database db;
+    User user;
 
     public MenuFragment() {
         // Required empty public constructor
@@ -53,6 +55,7 @@ public class MenuFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         db = ((MainActivity) getActivity()).getDb();
+        user = ((MainActivity) getActivity()).getUser();
 
         // GRABBING MENU BUTTONS AND MENU LAYOUTS
         Button[] menuButtons = {(Button) view.findViewById(R.id.settingsBtn),
@@ -75,6 +78,7 @@ public class MenuFragment extends Fragment {
         // SET UP LISTENERS FOR MENU BUTTONS
         setMenuListeners(menuButtons, menus);
         setSettingsListeners();
+        setSpinnerListeners();
         updateMenu();
     }
 
@@ -120,6 +124,7 @@ public class MenuFragment extends Fragment {
             TextView textView = getView().findViewById(textRes);
 
             setFreqBarListeners(seekBar, textView, i);
+            //setSpinnerListeners();
         }
     }
 
@@ -203,5 +208,48 @@ public class MenuFragment extends Fragment {
                 }
             }
         });
+    }
+
+    public void setSpinnerListeners(){
+        Spinner keySpinner = getView().findViewById(R.id.keySpinner);
+        Spinner scaleSpinner = getView().findViewById(R.id.scaleSpinner);
+
+        keySpinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener(){
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                try {
+                    user.setKey(keySpinner.getSelectedItem().toString(),scaleSpinner.getSelectedItem().toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                updateFreqs();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        scaleSpinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener(){
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                try {
+                    user.setKey(keySpinner.getSelectedItem().toString(),scaleSpinner.getSelectedItem().toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                updateFreqs();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
     }
 }

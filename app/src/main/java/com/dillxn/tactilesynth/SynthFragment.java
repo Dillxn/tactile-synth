@@ -87,7 +87,7 @@ public class SynthFragment extends Fragment implements SensorEventListener {
         super.onCreate(savedInstanceState);
 
         db = ((MainActivity) getActivity()).getDb();
-        user = new User(db);
+        user = ((MainActivity) getActivity()).getUser();
 
         // get display res
         DisplayMetrics displayMetrics = new DisplayMetrics();
