@@ -38,7 +38,7 @@ public class MenuFragment extends Fragment {
 
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_menu, container, false);
+        return view ;
     }
 
     @Override
