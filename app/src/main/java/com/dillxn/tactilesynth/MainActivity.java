@@ -67,10 +67,6 @@ public class MainActivity extends FragmentActivity {
 
         fragmentManager.beginTransaction().replace(R.id.fragmentContainerView, SynthFragment.class, null , "synthPrime").commit();
     }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 
     /* JOSH - ENABLES AND DISABLES THE DEBUG UI */
     public void menuToggle(View layout){

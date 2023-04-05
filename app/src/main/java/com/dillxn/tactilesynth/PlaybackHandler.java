@@ -29,11 +29,6 @@ import java.util.Scanner;
 
 import org.json.JSONArray;
 
-//TODO: figure out which xml is displayed when playing
-//TODO: connect the red button to stop recording and get the data.
-//TODO: add the data to the playback handler
-//TODO: use the playbackhandler to show the recordings and do other stuff with.
-
 public class PlaybackHandler {
     static {
         System.loadLibrary("tactilesynth");
@@ -173,10 +168,6 @@ public class PlaybackHandler {
     }
     public void startRecording(){
         startRecord();
-
-        /*for(float[] f : recordings){
-            play(f);
-        }*/
     }
 
     public void play(float[] data) {
