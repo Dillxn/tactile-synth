@@ -36,7 +36,6 @@ public class MainActivity extends FragmentActivity {
     public static PlaybackHandler playback;
 
     Database db;
-    User user;
     boolean menu = false;
 
     float maxX = 0;
@@ -47,7 +46,6 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = Database.getInstance(this);
-        user = new User(db);
         // set up UI
         setContentView(R.layout.activity_main);
         // make fullscreen
@@ -96,10 +94,7 @@ public class MainActivity extends FragmentActivity {
             }
         }
     }
-    // JOSH - PASSES DB TO FRAGMENTS
-    public Database getDb(){return db;}
 
-    public User getUser() {return user;}
 
     public void stopRecording(View view){
         System.out.println("STOPPED RECORDING");

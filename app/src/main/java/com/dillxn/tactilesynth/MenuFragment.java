@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,6 @@ public class MenuFragment extends Fragment {
     FragmentManager fragmentManager;
     Button button;
     Database db;
-    User user;
     TuningMenu tm;
     SettingsMenu sm;
 
@@ -66,9 +66,8 @@ public class MenuFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        db = ((MainActivity) getActivity()).getDb();
-        user = ((MainActivity) getActivity()).getUser();
-        tm = new TuningMenu(getContext(), view, user);
+        db = Database.getInstance();
+        tm = new TuningMenu(getContext(), view);
         sm = new SettingsMenu(getContext(), view);
 
         LinearLayout settingsMenu = (LinearLayout) view.findViewById(R.id.settings_menu);

@@ -24,11 +24,11 @@ public class TuningMenu {
     private SharedPreferences prefs;
 
 
-    public TuningMenu (Context context, View view, User user){
+    public TuningMenu (Context context, View view){
         this.context = context;
         this.view = view;
         this.db = Database.getInstance();
-        this.user = user;
+        this.user = new User(db);
         this.prefs = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 
         String selectedScale = prefs.getString("selectedScale", "");
