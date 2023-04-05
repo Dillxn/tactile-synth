@@ -26,7 +26,32 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias=".5" />
+        <Button
+            android:id="@+id/stopRecording"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:onClick="stopRecording"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias=".5"
+            android:layout_marginRight="90sp"
+            android:foreground="#FFFF0000"
+            />
+
+        <Button
+            android:id="@+id/startRecording"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:onClick="startRecording"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias=".5"
+            android:layout_marginRight="50sp"
+            android:foreground="#FF00FF00"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
