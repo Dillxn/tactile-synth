@@ -13,12 +13,12 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="30dp">
+        android:layout_height="30sp">
 
         <Button
             android:id="@+id/menuToggle"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="25sp"
+            android:layout_height="25sp"
             android:onClick="menuToggle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -26,27 +26,27 @@
             app:layout_constraintVertical_bias=".5" />
         <Button
             android:id="@+id/stopRecording"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="25sp"
+            android:layout_height="25sp"
             android:onClick="stopRecording"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias=".5"
-            android:layout_marginRight="380sp"
+            android:layout_marginRight="90sp"
             android:foreground="#FFFF0000"
             />
 
         <Button
             android:id="@+id/startRecording"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="25sp"
+            android:layout_height="25sp"
             android:onClick="startRecording"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias=".5"
-            android:layout_marginRight="350sp"
+            android:layout_marginRight="50sp"
             android:foreground="#FF00FF00"
             />
 
@@ -69,8 +69,8 @@
 
         <ImageView
             android:id="@+id/logo"
-            android:layout_width="204dp"
-            android:layout_height="0dp"
+            android:layout_width="204sp"
+            android:layout_height="0sp"
             android:src="@drawable/ic_full_logo_render"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
