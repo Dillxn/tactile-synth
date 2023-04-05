@@ -9,8 +9,16 @@ import androidx.fragment.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import org.xmlpull.v1.XmlPullParser;
+
+import java.util.ArrayList;
+
 
 public class MenuFragment extends Fragment {
     FragmentManager fragmentManager;
@@ -20,8 +28,13 @@ public class MenuFragment extends Fragment {
 
     Database db;
 
+    ArrayList<float[]> recordings = null;
+
     public MenuFragment() {
         // Required empty public constructor
+    }
+    public void updateRecordings(ArrayList<float []> recordings) {
+        this.recordings = recordings;
     }
 
     @Override
@@ -35,6 +48,7 @@ public class MenuFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_menu, container, false);
         synthFrag = (SynthFragment) fragmentManager.findFragmentByTag("synthPrime");
+        //get the recordings from the playback handler
 
 
         // Inflate the layout for this fragment
@@ -47,6 +61,18 @@ public class MenuFragment extends Fragment {
 
         db = ((MainActivity) getActivity()).getDb();
 
+
+        LinearLayout settingsMenu = (LinearLayout) view.findViewById(R.id.settings_menu);
+        LinearLayout tuningMenu = (LinearLayout) view.findViewById(R.id.tuning_menu);
+        LinearLayout effectsMenu = (LinearLayout) view.findViewById(R.id.effects_menu);
+        LinearLayout recordingMenu = (LinearLayout) view.findViewById(R.id.recording_menu);
+        ListView recordingList = (ListView) view.findViewById(R.id.recording_list);
+        //somehow figure out how to update the listview with the recordings. or figure out another system to make it interactable
+        ArrayList<float[]> recordings = ((MainActivity) getActivity()).playback.getRecordings();
+        RecordingsAdapter adapter = new RecordingsAdapter(getActivity(), recordings);
+        recordingList.setAdapter(adapter);
+        System.out.println("stop");
+
         // GRABBING MENU BUTTONS AND MENU LAYOUTS
         Button[] menuButtons = {(Button) view.findViewById(R.id.settingsBtn),
                                 (Button) view.findViewById(R.id.tuningBtn),
@@ -57,6 +83,7 @@ public class MenuFragment extends Fragment {
                                 (LinearLayout) view.findViewById(R.id.tuning_menu),
                                 (LinearLayout) view.findViewById(R.id.recording_menu),
                                 (LinearLayout) view.findViewById(R.id.effects_menu)};
+
 
         // SET UP LISTENERS FOR MENU BUTTONS
         setMenuListeners(menuButtons, menus);

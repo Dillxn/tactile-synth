@@ -212,3 +212,31 @@ JNIEXPORT jint JNICALL
 Java_com_dillxn_tactilesynth_Synth_getBufferSize(JNIEnv *env, jobject thiz) {
     return _bufferSize;
 }
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dillxn_tactilesynth_PlaybackHandler_startRecord(JNIEnv *env, jobject thiz) {
+    startRecord();
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dillxn_tactilesynth_PlaybackHandler_stopRecord(JNIEnv *env, jobject thiz) {
+    stopRecord();
+}
+extern "C"
+JNIEXPORT jfloatArray JNICALL
+Java_com_dillxn_tactilesynth_PlaybackHandler_getRecordedAudioData(JNIEnv *env, jobject thiz) {
+    _jfloatArray *audioDataArray = env->NewFloatArray(recordedData.size());
+    env->SetFloatArrayRegion(audioDataArray, 0, recordedData.size(), (const jfloat*)recordedData.data());
+
+    return audioDataArray;
+}
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_dillxn_tactilesynth_PlaybackHandler_getSampleRate(JNIEnv *env, jobject thiz) {
+    return _sampleRate;
+}
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_dillxn_tactilesynth_PlaybackHandler_getBufferSize(JNIEnv *env, jobject thiz) {
+    return _bufferSize;
+}

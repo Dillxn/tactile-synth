@@ -31,6 +31,10 @@ public class MainActivity extends FragmentActivity {
 
     VideoView background;
 
+    Button menuButton;
+
+    public static PlaybackHandler playback;
+
     Database db;
     boolean menu = false;
 
@@ -59,6 +63,8 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+        playback = new PlaybackHandler(getApplicationContext().getFilesDir());
+
         fragmentManager.beginTransaction().replace(R.id.fragmentContainerView, SynthFragment.class, null , "synthPrime").commit();
     }
 
@@ -66,7 +72,10 @@ public class MainActivity extends FragmentActivity {
     public void menuToggle(View layout){
         FragmentTransaction fTransaction = fragmentManager.beginTransaction();
         Fragment synthFragment = fragmentManager.findFragmentByTag("synthPrime");
-        Fragment menuFragment = fragmentManager.findFragmentByTag("optionsPrime");
+        Fragment menuFragment = (MenuFragment) fragmentManager.findFragmentByTag("optionsPrime");
+        if (menuFragment != null){
+            ((MenuFragment) menuFragment).updateRecordings(playback.recordings);
+        }
 
         if(!menu) {
             fragmentManager.beginTransaction()
@@ -88,5 +97,14 @@ public class MainActivity extends FragmentActivity {
     // JOSH - PASSES DB TO FRAGMENTS
     public Database getDb(){
         return db;
+    }
+
+    public void stopRecording(View view){
+        System.out.println("STOPPED RECORDING");
+        playback.addRecording();
+    }
+    public void startRecording(View view){
+        System.out.println("START RECORDING");
+        playback.startRecording();
     }
 }
