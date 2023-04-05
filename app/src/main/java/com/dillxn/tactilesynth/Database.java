@@ -11,6 +11,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Database {
@@ -163,4 +165,35 @@ public class Database {
         }
     }
 
+    public List<String> getScales(){
+        List<String> scales = new ArrayList<String>();
+        JSONArray data = getModel().optJSONArray("scales");
+
+        for (int i = 0; i < data.length(); i++){
+
+            JSONObject scale = null;
+            try {
+                scale = data.getJSONObject(i);
+                String name = scale.getString("name");
+                scales.add(name);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return scales;
+    }
+
+    public List<String> getKeys(){
+        List<String> keys = new ArrayList<String>();
+        JSONArray data = getModel().optJSONArray("keys");
+
+        for (int i = 0; i < data.length(); i++){
+            try {
+                    keys.add(data.getString(i));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return keys;
+    }
 }

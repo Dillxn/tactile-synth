@@ -94,10 +94,7 @@ public class MainActivity extends FragmentActivity {
             }
         }
     }
-    // JOSH - PASSES DB TO FRAGMENTS
-    public Database getDb(){
-        return db;
-    }
+
 
     public void stopRecording(View view){
         System.out.println("STOPPED RECORDING");

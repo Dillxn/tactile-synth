@@ -22,20 +22,23 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/axis_x"/>
+                android:background="@drawable/axis_button_left"
+                android:src="@drawable/axis_x" />
 
             <ImageView
                 android:id="@+id/axis_y_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/axis_y"/>
+                android:background="#99000000"
+                android:src="@drawable/axis_y" />
 
             <ImageView
                 android:id="@+id/axis_z_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@drawable/axis_button_right"
                 android:src="@drawable/axis_z" />
 
         </LinearLayout>
