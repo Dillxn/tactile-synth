@@ -34,6 +34,7 @@ public class MainActivity extends FragmentActivity {
     Button menuButton;
 
     public static PlaybackHandler playback;
+    Database db;
     boolean menu = false;
     boolean debugActive = false;
 
