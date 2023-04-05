@@ -87,9 +87,10 @@ public class PlaybackHandler {
             }
         }
         //WILL DELETE ALL RECORDINGS IF UNCOMMENTED, TESTING PURPOSES
-        for(File f : recordingsFolderFile.listFiles()){
+        /*for(File f : recordingsFolderFile.listFiles()){
             f.delete();
-        }
+        }*/
+        System.out.println("hello");
         //solid break point
     }
     public ArrayList<float[]> getRecordings(){

@@ -77,7 +77,7 @@ public class MenuFragment extends Fragment {
         ArrayList<float[]> recordings = ((MainActivity) getActivity()).playback.getRecordings();
         RecordingsAdapter adapter = new RecordingsAdapter(getActivity(), recordings);
         recordingList.setAdapter(adapter);
-
+        System.out.println("stop");
         // SET UP LISTENERS FOR MENU BUTTONS
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -116,11 +116,8 @@ public class MainActivity extends FragmentActivity {
     public void stopRecording(View view){
         System.out.println("STOPPED RECORDING");
         playback.addRecording();
-        for(float[] test : playback.recordings){
-            playback.play(test);
-        }
     }
-    public void startRecording(View viw){
+    public void startRecording(View view){
         System.out.println("START RECORDING");
         playback.startRecording();
     }
