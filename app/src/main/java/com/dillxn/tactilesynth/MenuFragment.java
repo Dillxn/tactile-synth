@@ -5,9 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,16 +19,14 @@ import org.xmlpull.v1.XmlPullParser;
 
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MenuFragment newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class MenuFragment extends Fragment {
     FragmentManager fragmentManager;
     SynthFragment synthFrag;
-
     View view;
+    Button button;
+
+    Database db;
 
     ArrayList<float[]> recordings = null;
 
@@ -54,19 +50,17 @@ public class MenuFragment extends Fragment {
         synthFrag = (SynthFragment) fragmentManager.findFragmentByTag("synthPrime");
         //get the recordings from the playback handler
 
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_menu, container, false);
+        return view ;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // GRABBING MENU BUTTONS AND MENU LAYOUTS
-        Button settingsButton = (Button) view.findViewById(R.id.settingsBtn);
-        Button tuningButton = (Button) view.findViewById(R.id.tuningBtn);
-        Button recordingButton = (Button) view.findViewById(R.id.recordingBtn);
-        Button effectsButton = (Button) view.findViewById(R.id.effectsBtn);
+        db = ((MainActivity) getActivity()).getDb();
+
 
         LinearLayout settingsMenu = (LinearLayout) view.findViewById(R.id.settings_menu);
         LinearLayout tuningMenu = (LinearLayout) view.findViewById(R.id.tuning_menu);
@@ -78,45 +72,86 @@ public class MenuFragment extends Fragment {
         RecordingsAdapter adapter = new RecordingsAdapter(getActivity(), recordings);
         recordingList.setAdapter(adapter);
         System.out.println("stop");
+
+        // GRABBING MENU BUTTONS AND MENU LAYOUTS
+        Button[] menuButtons = {(Button) view.findViewById(R.id.settingsBtn),
+                                (Button) view.findViewById(R.id.tuningBtn),
+                                (Button) view.findViewById(R.id.recordingBtn),
+                                (Button) view.findViewById(R.id.effectsBtn)};
+
+        LinearLayout[] menus = {(LinearLayout) view.findViewById(R.id.settings_menu),
+                                (LinearLayout) view.findViewById(R.id.tuning_menu),
+                                (LinearLayout) view.findViewById(R.id.recording_menu),
+                                (LinearLayout) view.findViewById(R.id.effects_menu)};
+
+
         // SET UP LISTENERS FOR MENU BUTTONS
-        settingsButton.setOnClickListener(new View.OnClickListener() {
+        setMenuListeners(menuButtons, menus);
+        setSettingsListeners();
+        updateMenu();
+    }
+
+    public void setMenuListeners(Button[] menuButtons, LinearLayout[] menus){
+        for (int i = 0; i < 4; i++){
+            int finalI = i;
+            menuButtons[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    menuChange(menus, finalI);
+                }
+            });
+        }
+    }
+
+    public void setSettingsListeners(){
+        button = getView().findViewById(R.id.debug);
+        button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                settingsMenu.setVisibility(View.VISIBLE);
-                tuningMenu.setVisibility(View.GONE);
-                effectsMenu.setVisibility(View.GONE);
-                recordingMenu.setVisibility(View.GONE);
+                toggleDebug();
             }
         });
 
-        tuningButton.setOnClickListener(new View.OnClickListener() {
+        button = getView().findViewById(R.id.grid);
+        button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                settingsMenu.setVisibility(View.GONE);
-                tuningMenu.setVisibility(View.VISIBLE);
-                effectsMenu.setVisibility(View.GONE);
-                recordingMenu.setVisibility(View.GONE);
+                toggleGrid();
             }
         });
+    }
 
-        recordingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                settingsMenu.setVisibility(View.GONE);
-                tuningMenu.setVisibility(View.GONE);
-                effectsMenu.setVisibility(View.GONE);
-                recordingMenu.setVisibility(View.VISIBLE);
+    public void menuChange(LinearLayout [] menus, int x){
+        for (int i = 0; i < 4; i++){
+            if(i == x){
+                menus[i].setVisibility(View.VISIBLE);
+            } else {
+                menus[i].setVisibility(View.GONE);
             }
-        });
+        }
+    }
+    public void toggleDebug(){
+        db.setDebug(!db.getDebug());
+        updateMenu();
+    }
 
-        effectsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                settingsMenu.setVisibility(View.GONE);
-                tuningMenu.setVisibility(View.GONE);
-                effectsMenu.setVisibility(View.VISIBLE);
-                recordingMenu.setVisibility(View.GONE);
-            }
-        });
+    public void toggleGrid(){
+        db.setGrid(!db.getGrid());
+        updateMenu();
+    }
+    public void updateMenu(){
+        button = getView().findViewById(R.id.debug);
+        if (db.getDebug()){
+            button.setText("Debug Enabled");
+        } else {
+            button.setText("Debug Disabled");
+        }
+
+        button = getView().findViewById(R.id.grid);
+        if (db.getGrid()){
+            button.setText("Grid Enabled");
+        } else {
+            button.setText("Grid Disabled");
+        }
     }
 }

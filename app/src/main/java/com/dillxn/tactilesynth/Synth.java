@@ -37,9 +37,11 @@ public class Synth {
     private native void setReverb(double reverb);
     private native void setBitCrush(double amount);
     private native void setFilter(double amount);
+    private native void setDelay(double amount);
+    private native void setTremolo(double amount);
     private native void setOscVolume(int oscId, double volume);
     private native void setOscAttack(int oscId, double amount);
-    public native void startRecord();
+    public native void startRecord();   
     public native void stopRecord();
     public native float[] getRecordedAudioData();
 
@@ -157,31 +159,24 @@ public class Synth {
                 setReverb(effectValue);
                 break;
             }
-            case "-reverb": {
-                setReverb(-1 * effectValue);
-                break;
-            }
-            case "bitcrush": {
-                setBitCrush(effectValue);
-            }
-            case "-bitcrush": {
-                setBitCrush(-1*effectValue);
-            }
             case "voices": {
                 for (int i = 0; i < MAX_POINTERS; i++) {
                     setOscVoicesVolume(i, effectValue);
                 }
-            }
-            case "-voices": {
-                for (int i = 0; i < MAX_POINTERS; i++) {
-                    setOscVoicesVolume(i, -1*effectValue);
-                }
+                break;
             }
             case "filter": {
                 setFilter(effectValue);
+                break;
             }
-            case "-filter": {
-                setFilter(-1*effectValue);
+            case "delay": {
+                // absolute value
+                setDelay(effectValue);
+                break;
+            }
+            case "tremolo": {
+                setTremolo(effectValue);
+                break;
             }
         }
     }
@@ -221,6 +216,8 @@ public class Synth {
         setFilter(0);
         setBitCrush(0);
         setReverb(0);
+        setDelay(0);
+        setTremolo(0);
 
         for (int i = 0; i < MAX_POINTERS; i++) {
             setOscVoicesVolume(i, 0);

@@ -12,11 +12,30 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+
 public class Database {
+    private static Database instance;
+    
     private String fileName = "db.json";
     private File dbFile;
     private JSONObject model;
     Context context;
+    
+    // Method to get the singleton instance of the Database class
+    public static synchronized Database getInstance(Context context) {
+        if (instance == null) {
+            instance = new Database(context.getApplicationContext());
+        }
+        return instance;
+    }
+    
+    // Method to get the singleton instance of the Database class
+    public static synchronized Database getInstance() {
+        if (instance == null) {
+            throw new RuntimeException("Database not initialized");
+        }
+        return instance;
+    }
 
     public Database(Context context) {
         // load custom db from internal storage
@@ -46,8 +65,6 @@ public class Database {
         } catch (IOException | JSONException ex) {
             ex.printStackTrace();
         }
-
-
     }
 
     // init() - loads default db and saves it to internal storage
@@ -109,4 +126,41 @@ public class Database {
         // return it
         return preset;
     }
+
+    public boolean getDebug(){
+        boolean state = false;
+        try {
+            state = this.getPreset().getBoolean("debugState");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return state;
+    }
+
+    public void setDebug(boolean state){
+        try {
+            this.getPreset().put("debugState", state);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean getGrid(){
+        boolean state = false;
+        try {
+            state = this.getPreset().getBoolean("gridState");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return state;
+    }
+
+    public void setGrid(boolean state){
+        try {
+            this.getPreset().put("gridState", state);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

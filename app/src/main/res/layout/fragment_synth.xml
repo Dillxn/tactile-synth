@@ -22,7 +22,7 @@
             android:id="@+id/debugUI"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible"
+            android:visibility="gone"
             tools:layout_editor_absoluteX="87dp"
             tools:layout_editor_absoluteY="25dp">
 
@@ -191,6 +191,136 @@
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/zRotation" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/noteGrid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#80FFFFFF"
+                android:visibility="visible"
+                app:layout_constraintEnd_toStartOf="@+id/textView14"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="0dp" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#80FFFFFF"
+                android:visibility="visible"
+                app:layout_constraintEnd_toStartOf="@+id/textView15"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/textView6"
+                tools:layout_editor_absoluteY="0dp" />
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#80FFFFFF"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/textView14"
+                tools:layout_editor_absoluteY="0dp" />
+
+            <TextView
+                android:id="@+id/textView17"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80FFFFFF"
+                app:layout_constraintBottom_toTopOf="@+id/textView18"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="168dp" />
+
+            <TextView
+                android:id="@+id/textView18"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80FFFFFF"
+                app:layout_constraintBottom_toTopOf="@+id/textView19"
+                app:layout_constraintTop_toBottomOf="@+id/textView17"
+                tools:layout_editor_absoluteX="168dp" />
+
+            <TextView
+                android:id="@+id/textView19"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80FFFFFF"
+                app:layout_constraintBottom_toTopOf="@+id/textView20"
+                app:layout_constraintTop_toBottomOf="@+id/textView18"
+                tools:layout_editor_absoluteX="168dp" />
+
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80FFFFFF"
+                app:layout_constraintBottom_toTopOf="@+id/textView21"
+                app:layout_constraintTop_toBottomOf="@+id/textView19"
+                tools:layout_editor_absoluteX="168dp" />
+
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80FFFFFF"
+                app:layout_constraintBottom_toTopOf="@+id/textView22"
+                app:layout_constraintTop_toBottomOf="@+id/textView20"
+                tools:layout_editor_absoluteX="168dp" />
+
+            <TextView
+                android:id="@+id/textView22"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80FFFFFF"
+                app:layout_constraintBottom_toTopOf="@+id/textView23"
+                app:layout_constraintTop_toBottomOf="@+id/textView21"
+                tools:layout_editor_absoluteX="168dp" />
+
+            <TextView
+                android:id="@+id/textView23"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80FFFFFF"
+                app:layout_constraintBottom_toTopOf="@+id/textView24"
+                app:layout_constraintTop_toBottomOf="@+id/textView22"
+                tools:layout_editor_absoluteX="168dp" />
+
+            <TextView
+                android:id="@+id/textView24"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80FFFFFF"
+                app:layout_constraintBottom_toTopOf="@+id/textView25"
+                app:layout_constraintTop_toBottomOf="@+id/textView23"
+                tools:layout_editor_absoluteX="168dp" />
+
+            <TextView
+                android:id="@+id/textView25"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80FFFFFF"
+                app:layout_constraintBottom_toTopOf="@+id/textView26"
+                app:layout_constraintTop_toBottomOf="@+id/textView24"
+                tools:layout_editor_absoluteX="168dp" />
+
+            <TextView
+                android:id="@+id/textView26"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80FFFFFF"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView25"
+                tools:layout_editor_absoluteX="168dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

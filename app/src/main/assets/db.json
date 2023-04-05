@@ -61,7 +61,10 @@
           "y": ["reverb"],
           "z": ["filter"]
         }
-      }
+      },
+      "gridState": false,
+      "debugState": false
     }
-  ]
+  ],
+  "effects": [ "reverb", "filter", "voices", "delay", "tremolo" ]
 }

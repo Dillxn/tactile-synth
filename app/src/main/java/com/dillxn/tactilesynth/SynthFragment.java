@@ -3,6 +3,9 @@ package com.dillxn.tactilesynth;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,25 +13,20 @@ import android.hardware.SensorManager;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
-import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
+
 import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,22 +71,21 @@ public class SynthFragment extends Fragment implements SensorEventListener {
     ArrayList<Integer> xEffectList = new ArrayList<>();
     ArrayList<Integer> yEffectList = new ArrayList<>();
     ArrayList<Integer> zEffectList = new ArrayList<>();
-    String[] effectArray = {"reverb", "voices", "filter"};
+    String[] effectArray = {"reverb", "voices", "filter", "delay", "tremolo"};
 
-    boolean debugMenuActive = false;
 
     public SynthFragment() {
         // Required empty public constructor
     }
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        db = new Database(getActivity());
+        db = ((MainActivity) getActivity()).getDb();
+        //db = new Database(getActivity());
         user = new User(db);
+
 
         // get display res
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -162,7 +159,6 @@ public class SynthFragment extends Fragment implements SensorEventListener {
 
         // Load frequency values to UI
         setFreqUI(view);
-
         return view;
     }
     // JOSH - USED TO UPDATE SYNTH WITH CHANGES MADE FROM SETTINGS
@@ -170,6 +166,12 @@ public class SynthFragment extends Fragment implements SensorEventListener {
     public void onStart() {
         super.onStart();
         updateSettings();
+        Canvas synthArea = new Canvas();
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setStrokeWidth(1f);
+
+        synthArea.drawLine(25,25,250,250, paint);
     }
 
     @Override
@@ -313,8 +315,6 @@ public class SynthFragment extends Fragment implements SensorEventListener {
             }
             zEffects.setText(stringBuilder.toString());
             stringBuilder.delete(0,stringBuilder.length());
-
-
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -325,9 +325,7 @@ public class SynthFragment extends Fragment implements SensorEventListener {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         builder.setTitle("Select Effect");
-
         builder.setCancelable(false);
-
         builder.setMultiChoiceItems(effectArray, selectedEffects, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i, boolean checked) {
@@ -339,15 +337,11 @@ public class SynthFragment extends Fragment implements SensorEventListener {
                 }
             }
         });
-
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 StringBuilder stringBuilder = new StringBuilder();
                 JSONArray effects = new JSONArray();
-
-                JSONObject preset = db.getPreset();
-                JSONObject gyroEffects = null;
 
                 for (int j = 0; j < effectList.size(); j++){
                     stringBuilder.append(effectArray[effectList.get(j)]);
@@ -364,7 +358,6 @@ public class SynthFragment extends Fragment implements SensorEventListener {
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-
             }
         });
 
@@ -396,23 +389,17 @@ public class SynthFragment extends Fragment implements SensorEventListener {
         builder.show();
     }
 
-    // JOSH - CALLED FROM MAIN ACTIVITY TO SET DEBUG TO TRUE OR FALSE
-    public void toggleDebug(){
-        if (debugMenuActive){
-            debugMenuActive = !debugMenuActive;
-
-        } else {
-            debugMenuActive = !debugMenuActive;
-        }
-    }
-
     public void updateSettings(){
-        if (debugMenuActive){
+        if (!db.getDebug()){
             getView().findViewById(R.id.debugUI).setVisibility(View.INVISIBLE);
         } else {
             getView().findViewById(R.id.debugUI).setVisibility(View.VISIBLE);
         }
+        if (!db.getGrid()){
+            getView().findViewById(R.id.noteGrid).setVisibility(View.INVISIBLE);
+        } else {
+            getView().findViewById(R.id.noteGrid).setVisibility(View.VISIBLE);
+        }
     }
-
 }
 

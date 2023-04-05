@@ -24,8 +24,7 @@
             android:layout_weight="1"
             android:text="Tuning"
             android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:visibility="visible" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/effectsBtn"
@@ -63,14 +62,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <Button
             android:id="@+id/debug"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="toggleDebug"
             android:text="Activate/Deactivate Debug" />
+
+        <Button
+            android:id="@+id/grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Activate/Deactivate Grid" />
 
     </LinearLayout>
 
@@ -96,11 +100,10 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <TextView
-            android:id="@+id/textView3"
+        <com.dillxn.tactilesynth.EffectsMenuView
+            android:id="@+id/effects_menu_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="This is a placeholder for the effects menu screen." />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
