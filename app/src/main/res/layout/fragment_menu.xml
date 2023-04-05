@@ -87,7 +87,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -385,6 +385,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="visible">
+
         <ListView
             android:id="@+id/recording_list"
             android:layout_width="match_parent"
