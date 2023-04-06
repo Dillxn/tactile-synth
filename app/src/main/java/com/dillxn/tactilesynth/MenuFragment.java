@@ -6,27 +6,39 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
 
-import java.util.ArrayList;
 
 
 public class MenuFragment extends Fragment {
     FragmentManager fragmentManager;
-    SynthFragment synthFrag;
-    View view;
     Button button;
-
     Database db;
+    TuningMenu tm;
+    SettingsMenu sm;
 
     ArrayList<float[]> recordings = null;
     static RecordingsAdapter adapter = null;
@@ -45,23 +57,19 @@ public class MenuFragment extends Fragment {
         fragmentManager = getParentFragmentManager();
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_menu, container, false);
-        synthFrag = (SynthFragment) fragmentManager.findFragmentByTag("synthPrime");
-        //get the recordings from the playback handler
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 
-        // Inflate the layout for this fragment
-        return view ;
+        return inflater.inflate(R.layout.fragment_menu, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        db = ((MainActivity) getActivity()).getDb();
-
+        db = Database.getInstance();
+        tm = new TuningMenu(getContext(), view);
+        sm = new SettingsMenu(getContext(), view);
 
         LinearLayout settingsMenu = (LinearLayout) view.findViewById(R.id.settings_menu);
         LinearLayout tuningMenu = (LinearLayout) view.findViewById(R.id.tuning_menu);
@@ -89,8 +97,8 @@ public class MenuFragment extends Fragment {
 
         // SET UP LISTENERS FOR MENU BUTTONS
         setMenuListeners(menuButtons, menus);
-        setSettingsListeners();
-        updateMenu();
+        // KEEPS SETTINGS MENU INFO UP TO DATE VISUALLY
+        sm.updateMenu();
     }
 
     public void setMenuListeners(Button[] menuButtons, LinearLayout[] menus){
@@ -105,24 +113,6 @@ public class MenuFragment extends Fragment {
         }
     }
 
-    public void setSettingsListeners(){
-        button = getView().findViewById(R.id.debug);
-        button.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                toggleDebug();
-            }
-        });
-
-        button = getView().findViewById(R.id.grid);
-        button.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                toggleGrid();
-            }
-        });
-    }
-
     public void menuChange(LinearLayout [] menus, int x){
         for (int i = 0; i < 4; i++){
             if(i == x){
@@ -132,28 +122,5 @@ public class MenuFragment extends Fragment {
             }
         }
     }
-    public void toggleDebug(){
-        db.setDebug(!db.getDebug());
-        updateMenu();
-    }
 
-    public void toggleGrid(){
-        db.setGrid(!db.getGrid());
-        updateMenu();
-    }
-    public void updateMenu(){
-        button = getView().findViewById(R.id.debug);
-        if (db.getDebug()){
-            button.setText("Debug Enabled");
-        } else {
-            button.setText("Debug Disabled");
-        }
-
-        button = getView().findViewById(R.id.grid);
-        if (db.getGrid()){
-            button.setText("Grid Enabled");
-        } else {
-            button.setText("Grid Disabled");
-        }
-    }
 }

@@ -13,6 +13,8 @@ import android.hardware.SensorManager;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.DisplayMetrics;
@@ -22,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -43,7 +46,6 @@ public class SynthFragment extends Fragment implements SensorEventListener {
 
     Synth synth;
     Database db;
-    User user;
 
     View view;
 
@@ -82,10 +84,7 @@ public class SynthFragment extends Fragment implements SensorEventListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        db = ((MainActivity) getActivity()).getDb();
-        //db = new Database(getActivity());
-        user = new User(db);
-
+        db = Database.getInstance();
 
         // get display res
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -94,8 +93,7 @@ public class SynthFragment extends Fragment implements SensorEventListener {
         int yres = displayMetrics.heightPixels;
 
         // Init synth
-        this.synth = new Synth(xres, yres, db);
-
+        synth = new Synth(xres, yres, db);
 
         // start sensor listening
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
@@ -110,6 +108,24 @@ public class SynthFragment extends Fragment implements SensorEventListener {
         view = inflater.inflate(R.layout.fragment_synth, container, false);
 
         Touchpad touchpad = view.findViewById(R.id.touchpad);
+
+        // JOSH - THIS UPDATES THE PLAYABLE AREA AS SOON AS THE TOUCHABLE AREAS ARE DRAWN
+        view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                if (view.getViewTreeObserver().isAlive())
+                    view.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                int xRes = view.findViewById(R.id.fragFrame).getWidth();
+                int yRes = view.findViewById(R.id.fragFrame).getHeight();
+
+                synth.xres = xRes;
+                synth.yres = yRes;
+
+                return true;
+            }
+        });
+
         touchpad.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
@@ -161,6 +177,7 @@ public class SynthFragment extends Fragment implements SensorEventListener {
         setFreqUI(view);
         return view;
     }
+
     // JOSH - USED TO UPDATE SYNTH WITH CHANGES MADE FROM SETTINGS
     @Override
     public void onStart() {
