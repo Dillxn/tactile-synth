@@ -29,6 +29,7 @@ public class MenuFragment extends Fragment {
     Database db;
 
     ArrayList<float[]> recordings = null;
+    static RecordingsAdapter adapter = null;
 
     public MenuFragment() {
         // Required empty public constructor
@@ -69,9 +70,10 @@ public class MenuFragment extends Fragment {
         ListView recordingList = (ListView) view.findViewById(R.id.recording_list);
         //somehow figure out how to update the listview with the recordings. or figure out another system to make it interactable
         ArrayList<float[]> recordings = ((MainActivity) getActivity()).playback.getRecordings();
-        RecordingsAdapter adapter = new RecordingsAdapter(getActivity(), recordings);
+        adapter = new RecordingsAdapter(getActivity(), recordings);
         recordingList.setAdapter(adapter);
-        System.out.println("stop");
+        //temperary fix, need to figure out how to maintain persistence of checked settings.
+        ((MainActivity) getActivity()).playback.flushSelected();
 
         // GRABBING MENU BUTTONS AND MENU LAYOUTS
         Button[] menuButtons = {(Button) view.findViewById(R.id.settingsBtn),

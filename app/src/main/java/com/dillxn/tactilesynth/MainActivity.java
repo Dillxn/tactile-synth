@@ -32,7 +32,10 @@ public class MainActivity extends FragmentActivity {
     VideoView background;
 
     Button menuButton;
-
+    Button armRecording;
+    Button playRecordButton;
+    Boolean isRecordingArmed = false;
+    Boolean isRecording = false;
     public static PlaybackHandler playback;
 
     Database db;
@@ -56,6 +59,10 @@ public class MainActivity extends FragmentActivity {
         Uri bgUri = Uri.parse("android.resource://" + getPackageName() +"/" + R.raw.background);
         background.setVideoURI(bgUri);
         background.start();
+        //set recording and arm button
+        armRecording = findViewById(R.id.armRecording);
+        playRecordButton = findViewById(R.id.playRecording);
+
         background.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
@@ -99,12 +106,31 @@ public class MainActivity extends FragmentActivity {
         return db;
     }
 
-    public void stopRecording(View view){
-        System.out.println("STOPPED RECORDING");
-        playback.addRecording();
+    public void armRecording(View view){
+        isRecordingArmed = !isRecordingArmed;
+        if(isRecordingArmed){
+            armRecording.setBackgroundColor(getColor(R.color.armed));
+        }else {
+            armRecording.setBackgroundColor(getColor(R.color.disarmed));
+        }
+        System.out.println("ARMED RECORDING");
     }
     public void startRecording(View view){
-        System.out.println("START RECORDING");
-        playback.startRecording();
+        if(isRecording){
+            playRecordButton.setBackgroundColor(getColor(R.color.readyToRecord));
+            playback.addRecording();
+            isRecording = false;
+        }else if(isRecordingArmed && !isRecording){
+            playback.startRecording();
+            playback.playSelected();
+            playRecordButton.setBackgroundColor(getColor(R.color.recording));
+            isRecording = true;
+        }else{
+            playRecordButton.setBackgroundColor(getColor(R.color.readyToRecord));
+            playback.playSelected();
+
+        }
+
+        System.out.println("START/STOP/PLAY RECORDING");
     }
 }

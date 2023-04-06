@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import androidx.core.app.ActivityCompat;
 
 import java.io.PrintWriter;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -39,6 +40,7 @@ public class PlaybackHandler {
     public native int getSampleRate();
     public native int getBufferSize();
 
+    ArrayList<float[]> selectedRecordings = new ArrayList<>();
     ArrayList<float[]> recordings = new ArrayList<>();
     ArrayList<float[]> newRecordings = new ArrayList<>();
     File dirPath;
@@ -46,7 +48,6 @@ public class PlaybackHandler {
     File recordingsFolderFile;
     int count = 0;
     String defaultFileName = "recording";
-    int totalRecordings = 0;
 
 
     public PlaybackHandler(File dirPath) {
@@ -108,7 +109,7 @@ public class PlaybackHandler {
 
     //from the activity pass in the argument getApplicationContext().getFilesDir() as the path
     public void save(float[] data){
-        File file = new File(recordingsFolderFile, (defaultFileName + totalRecordings++ + ".bin"));
+        File file = new File(recordingsFolderFile, (defaultFileName + count++ + ".bin"));
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             DataOutputStream dataOutputStream = new DataOutputStream(fileOutputStream);
@@ -168,6 +169,14 @@ public class PlaybackHandler {
     }
     public void startRecording(){
         startRecord();
+    }
+    public void playSelected(){
+        for(int i = 0; i < selectedRecordings.size(); i++){
+            play(selectedRecordings.get(i));
+        }
+    }
+    public void flushSelected(){
+        selectedRecordings = new ArrayList<>();
     }
 
     public void play(float[] data) {
