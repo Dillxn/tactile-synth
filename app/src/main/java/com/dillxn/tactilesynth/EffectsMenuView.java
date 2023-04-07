@@ -117,6 +117,9 @@ public class EffectsMenuView extends BaseCustomView {
 
                     // Get the effects for the selected axis
                     JSONArray axisEffects = sensorEffects.optJSONObject("gyroscope").optJSONArray(axis);
+                    
+                    // Reset the effect values
+                    Synth.getInstance().resetEffects();
 
                     // Add or remove the effect from the axis effects
                     if (isChecked) {
