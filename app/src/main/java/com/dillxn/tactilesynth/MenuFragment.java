@@ -80,7 +80,7 @@ public class MenuFragment extends Fragment {
         ArrayList<float[]> recordings = ((MainActivity) getActivity()).playback.getRecordings();
         adapter = new RecordingsAdapter(getActivity(), recordings);
         recordingList.setAdapter(adapter);
-        //temperary fix, need to figure out how to maintain persistence of checked settings.
+        //temporary fix, need to figure out how to maintain persistence of checked settings.
         ((MainActivity) getActivity()).playback.flushSelected();
 
         // GRABBING MENU BUTTONS AND MENU LAYOUTS
