@@ -102,7 +102,14 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-
+@Override
+    public void onResume(){
+        super.onResume();
+        background = findViewById(R.id.background);
+        Uri bgUri = Uri.parse("android.resource://" + getPackageName() +"/" + R.raw.background);
+        background.setVideoURI(bgUri);
+        background.start();
+}
     public void armRecording(View view){
         isRecordingArmed = !isRecordingArmed;
         if(isRecordingArmed){
