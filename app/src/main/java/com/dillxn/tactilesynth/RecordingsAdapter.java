@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -31,6 +33,17 @@ public class RecordingsAdapter extends ArrayAdapter<float[]> {
         recordingNameTextView.setText("Recording " + (position + 1));
 
         Button playButton = convertView.findViewById(R.id.play_button);
+        CheckBox checkPlay = convertView.findViewById(R.id.check_box_play);
+        checkPlay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    ((MainActivity) mContext).playback.selectedRecordings.add((mRecordings.get(position)));
+                } else {
+                    ((MainActivity) mContext).playback.selectedRecordings.remove((mRecordings.get(position)));
+                }
+            }
+        });
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

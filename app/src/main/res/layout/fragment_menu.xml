@@ -374,6 +374,7 @@
         android:orientation="vertical"
         android:visibility="gone">
 
+<!--something wrong here causing design mode to disappear, not sure if anything functionally wrong tho -->
         <com.dillxn.tactilesynth.EffectsMenuView
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -393,13 +394,13 @@
 
 
         </ListView>
-        <!--
-        <TextView
+
+        <!--<TextView
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/recording" />
-            -->
+            android:background="@drawable/recording" />-->
+
     </LinearLayout>
 
 </LinearLayout>

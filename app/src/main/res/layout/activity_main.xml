@@ -28,20 +28,20 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias=".5" />
         <Button
-            android:id="@+id/stopRecording"
+            android:id="@+id/armRecording"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:onClick="stopRecording"
+            android:onClick="armRecording"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias=".5"
             android:layout_marginRight="90sp"
-            android:foreground="#FFFF0000"
+            android:background="@color/disarmed"
             />
 
         <Button
-            android:id="@+id/startRecording"
+            android:id="@+id/playRecording"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:onClick="startRecording"
@@ -50,7 +50,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias=".5"
             android:layout_marginRight="50sp"
-            android:foreground="#FF00FF00"
+            android:background="@color/readyToRecord"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
