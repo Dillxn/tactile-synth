@@ -16,6 +16,14 @@ public class RecordingsAdapter extends ArrayAdapter<float[]> {
 
     private Context mContext;
     private ArrayList<float[]> mRecordings;
+    public static RecordingsAdapter instance;
+    
+    public static synchronized RecordingsAdapter getInstance() {
+        if (instance == null) {
+            throw new RuntimeException("RecordingsAdapter not initialized");
+        }
+        return instance;
+    }
 
     public RecordingsAdapter(Context context, ArrayList<float[]> recordings) {
         super(context, 0, recordings);
@@ -34,6 +42,10 @@ public class RecordingsAdapter extends ArrayAdapter<float[]> {
 
         Button playButton = convertView.findViewById(R.id.play_button);
         CheckBox checkPlay = convertView.findViewById(R.id.check_box_play);
+        
+        boolean checked = PlaybackHandler.getInstance().selectedRecordings.contains(mRecordings.get(position));
+        checkPlay.setChecked(checked);
+        
         checkPlay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -49,6 +61,18 @@ public class RecordingsAdapter extends ArrayAdapter<float[]> {
             public void onClick(View v) {
                 // Call method in PlaybackHandler to play recording
                 ((MainActivity) mContext).playback.play(mRecordings.get(position));
+            }
+        });
+
+        Button deleteButton = convertView.findViewById(R.id.delete_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Delete the recording
+                ((MainActivity) mContext).playback.deleteRecording(mRecordings.get(position));
+
+                // Notify the adapter that the data set has changed
+                notifyDataSetChanged();
             }
         });
 

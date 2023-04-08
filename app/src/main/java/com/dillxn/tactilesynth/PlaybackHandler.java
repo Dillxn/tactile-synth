@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
 
-
 import androidx.core.app.ActivityCompat;
 
 import java.io.PrintWriter;
@@ -34,11 +33,25 @@ public class PlaybackHandler {
     static {
         System.loadLibrary("tactilesynth");
     }
+
     public native void startRecord();
+
     public native void stopRecord();
+
     public native float[] getRecordedAudioData();
+
     public native int getSampleRate();
+
     public native int getBufferSize();
+
+    public static PlaybackHandler instance;
+
+    public static synchronized PlaybackHandler getInstance() {
+        if (instance == null) {
+            throw new RuntimeException("PlaybackHandler not initialized");
+        }
+        return instance;
+    }
 
     ArrayList<float[]> selectedRecordings = new ArrayList<>();
     ArrayList<float[]> recordings = new ArrayList<>();
@@ -49,66 +62,73 @@ public class PlaybackHandler {
     int count = 0;
     String defaultFileName = "recording";
 
-
     public PlaybackHandler(File dirPath) {
         this.dirPath = dirPath;
-        //if the dirPath exists
-        if(this.dirPath.exists()){
+        // if the dirPath exists
+        if (this.dirPath.exists()) {
             recordingsBase = new File(dirPath, "recording");
-            //if the dir path + "recording" exists.
-            if(recordingsBase.exists()){
+            // if the dir path + "recording" exists.
+            if (recordingsBase.exists()) {
                 recordingsFolderFile = new File(recordingsBase, "recordings");
-                if(!recordingsFolderFile.exists()){
+                if (!recordingsFolderFile.exists()) {
                     System.out.println("Somehow recordingsFolderFile does not exist");
                 }
                 loadAll();
                 updateCount();
 
-            }else{//what happens if recordings base does not exist
+            } else {// what happens if recordings base does not exist
                 Boolean isCreated = recordingsBase.mkdir();
-                if(isCreated){
+                if (isCreated) {
                     System.out.println("recordingsBase created");
-                    //since recordingsbase is good now create the recordings folder
+                    // since recordingsbase is good now create the recordings folder
                     recordingsFolderFile = new File(recordingsBase, "recordings");
                     Boolean isRecordingsCreated = recordingsFolderFile.mkdir();
-                    if(isRecordingsCreated){
+                    if (isRecordingsCreated) {
                         System.out.println("recordingsFolderFile created");
-                    }else{
+                    } else {
                         System.out.println("failed to create recordingsFolderFile");
                     }
-                }else{
+                } else {
                     System.out.println("failed to create recordingsBase");
                 }
                 updateCount();
             }
         }
-        //WILL DELETE ALL RECORDINGS IF UNCOMMENTED, TESTING PURPOSES
-        /*for(File f : recordingsFolderFile.listFiles()){
-            f.delete();
-        }*/
+        // WILL DELETE ALL RECORDINGS IF UNCOMMENTED, TESTING PURPOSES
+        /*
+         * for(File f : recordingsFolderFile.listFiles()){
+         * f.delete();
+         * }
+         */
         System.out.println("hello");
-        //solid break point
+
+        instance = this;
+        // solid break point
     }
-    public ArrayList<float[]> getRecordings(){
+
+    public ArrayList<float[]> getRecordings() {
         return recordings;
     }
-    private void updateCount(){
+
+    private void updateCount() {
         int largestCount = 0;
-        for(File file : recordingsFolderFile.listFiles()){
+        for (File file : recordingsFolderFile.listFiles()) {
             String name = file.getName();
             int temp = getFileNumber(name);
-            if(temp > largestCount){
+            if (temp > largestCount) {
                 largestCount = temp;
             }
         }
-        count = largestCount+1;
-    }
-    private int getFileNumber(String s){
-        return Integer.valueOf(s.substring(9,s.length()-4));
+        count = largestCount + 1;
     }
 
-    //from the activity pass in the argument getApplicationContext().getFilesDir() as the path
-    public void save(float[] data){
+    private int getFileNumber(String s) {
+        return Integer.valueOf(s.substring(9, s.length() - 4));
+    }
+
+    // from the activity pass in the argument getApplicationContext().getFilesDir()
+    // as the path
+    public void save(float[] data) {
         File file = new File(recordingsFolderFile, (defaultFileName + count++ + ".bin"));
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
@@ -118,64 +138,69 @@ public class PlaybackHandler {
             }
             dataOutputStream.close();
             fileOutputStream.close();
-        }catch(Exception e) {
+        } catch (Exception e) {
             System.out.println("ERROR IN SAVING");
             System.out.println(e.getMessage());
         }
     }
 
-    public void saveAll(){
-        for(float[] recording : newRecordings){
+    public void saveAll() {
+        for (float[] recording : newRecordings) {
             save(recording);
         }
     }
-    public float[] load(File file){
+
+    public float[] load(File file) {
         ArrayList<Float> fileArray = new ArrayList<>();
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
             DataInputStream dataInputStream = new DataInputStream(fileInputStream);
 
             boolean notDone = true;
-            while(notDone){
-                try{
+            while (notDone) {
+                try {
                     fileArray.add(dataInputStream.readFloat());
-                }catch(Exception e){
+                } catch (Exception e) {
                     notDone = false;
                 }
             }
             dataInputStream.close();
-        }catch(Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         float[] ret = new float[fileArray.size()];
-        for(int i = 0; i < fileArray.size(); i++){
+        for (int i = 0; i < fileArray.size(); i++) {
             ret[i] = fileArray.get(i);
         }
         return ret;
-        
+
     }
-    public void loadAll(){
+
+    public void loadAll() {
         File[] files = recordingsFolderFile.listFiles();
-        for(File f : files){
+        for (File f : files) {
             recordings.add(load(f));
         }
     }
 
-    public void addRecording(){
+    public void addRecording() {
         stopRecord();
         float[] temp = getRecordedAudioData();
         recordings.add(temp);
-        save(temp);
+        selectedRecordings.add(temp);
     }
-    public void startRecording(){
+
+    public void startRecording() {
         startRecord();
     }
-    public void playSelected(){
-        for(int i = 0; i < selectedRecordings.size(); i++){
+
+    public void playSelected() {
+        for (int i = 0; i < selectedRecordings.size(); i++) {
             play(selectedRecordings.get(i));
         }
     }
-    public void flushSelected(){
+
+    public void flushSelected() {
         selectedRecordings = new ArrayList<>();
     }
 
@@ -210,5 +235,44 @@ public class PlaybackHandler {
         } else {
             Log.e("AudioTrack", "Failed to initialize AudioTrack");
         }
+    }
+
+    public void deleteRecording(float[] data) {
+        // Find the index of the recording in the recordings list
+        int index = recordings.indexOf(data);
+
+        if (index != -1) {
+            // Remove the recording from the recordings list
+            recordings.remove(index);
+
+            // Remove the recording from the selectedRecordings list, if present
+            selectedRecordings.remove(data);
+
+            // Find and delete the corresponding file for the recording
+            File[] files = recordingsFolderFile.listFiles();
+            for (File file : files) {
+                float[] loadedData = load(file);
+                if (arraysAreEqual(loadedData, data)) {
+                    file.delete();
+                    break;
+                }
+            }
+
+            // Update the count
+            updateCount();
+        }
+    }
+
+    private boolean arraysAreEqual(float[] arr1, float[] arr2) {
+        if (arr1.length != arr2.length) {
+            return false;
+        }
+
+        for (int i = 0; i < arr1.length; i++) {
+            if (arr1[i] != arr2[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -17,15 +17,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Play"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/check_box_play" />
 
     <CheckBox
         android:id="@+id/check_box_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="90sp"/>
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/delete_button" />
 
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true" />
 
 </RelativeLayout>
