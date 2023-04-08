@@ -17,8 +17,6 @@ public class RecordPlayButtons extends FrameLayout {
     private boolean isRecording = false;
     private Context mContext;
 
-    private RecordingsUpdateListener mListener;
-
     private PlaybackHandler playback;
 
     public RecordPlayButtons(@NonNull Context context) {
@@ -29,12 +27,6 @@ public class RecordPlayButtons extends FrameLayout {
     public RecordPlayButtons(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
-    }
-
-    // Update the constructor to accept the listener
-    public RecordPlayButtons(Context context, RecordingsUpdateListener listener) {
-        mContext = context;
-        mListener = listener;
     }
 
     private void init(Context context) {
@@ -61,7 +53,6 @@ public class RecordPlayButtons extends FrameLayout {
             isRecording = false;
             playRecordButton.setBackgroundColor(getCompatColor(R.color.readyToRecord));
             playback.addRecording();
-            RecordingsAdapter.getInstance().notifyDataSetChanged();
         } else if (isRecordingArmed) {
             // start recording
             // Add logic for handling recording start

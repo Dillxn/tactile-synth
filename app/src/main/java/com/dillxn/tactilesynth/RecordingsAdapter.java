@@ -16,14 +16,6 @@ public class RecordingsAdapter extends ArrayAdapter<float[]> {
 
     private Context mContext;
     private ArrayList<float[]> mRecordings;
-    public static RecordingsAdapter instance;
-    
-    public static synchronized RecordingsAdapter getInstance() {
-        if (instance == null) {
-            throw new RuntimeException("RecordingsAdapter not initialized");
-        }
-        return instance;
-    }
 
     public RecordingsAdapter(Context context, ArrayList<float[]> recordings) {
         super(context, 0, recordings);
