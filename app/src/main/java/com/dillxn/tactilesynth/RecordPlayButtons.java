@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat;
 
 public class RecordPlayButtons extends FrameLayout implements Looper.ProgressListener {
     private Button armRecordingBtn;
-    private Button playRecordButton;
+    private Button playStopButton;
     private boolean isRecordingArmed = false;
     private boolean isRecording = false;
     private boolean isPlaying = false;
@@ -47,10 +47,10 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
         LayoutInflater.from(context).inflate(R.layout.record_play_buttons, this, true);
 
         armRecordingBtn = findViewById(R.id.armRecording);
-        playRecordButton = findViewById(R.id.playRecording);
+        playStopButton = findViewById(R.id.playRecording);
 
         armRecordingBtn.setOnClickListener(view -> armRecording());
-        playRecordButton.setOnClickListener(view -> playStop());
+        playStopButton.setOnClickListener(view -> playStop());
 
         playback = PlaybackHandler.getInstance();
         metronome = new Metronome();
@@ -85,7 +85,7 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
     private void startPlayback() {
         isPlaying = true;
         // set background image to @drawable/btn_stop_active
-        playRecordButton.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.btn_stop_active));
+        playStopButton.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.btn_stop_active));
 
         if (isRecordingArmed) {
             shouldUpdateCursorPosition = false;
@@ -99,15 +99,13 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
             looper.startLoop();
         }
 
-        looper.startLoop();
-        loopTimelineView.updateCursorPosition(0);
     }
 
     private void stopPlayback() {
         shouldUpdateCursorPosition = false;
         isPlaying = false;
         // set background image to @drawable/btn_play
-        playRecordButton.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.btn_play));
+        playStopButton.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.btn_play));
 
         if (isRecording) {
             stopRecording();
@@ -119,21 +117,24 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
         }
 
         looper.stopLoop();
+
         loopTimelineView.updateCursorPosition(0);
 
     }
 
     private void startRecording() {
+        // Countdown
         int countdownBeats = 4;
-        playRecordButton.setEnabled(false); // Disable the button during countdown
-
+        playStopButton.setEnabled(false); // Disable the button during countdown
         metronome.playMetronome(); // Play the metronome during countdown
-        // Add logic for handling recording start
+
+
         Handler handler = new Handler();
         handler.postDelayed(() -> {
+            // Start Recording
             shouldUpdateCursorPosition = true;
-            playRecordButton.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.btn_stop_active));
-            playRecordButton.setEnabled(true); // Enable the button after countdown
+            playStopButton.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.btn_stop_active));
+            playStopButton.setEnabled(true); // Enable the button after countdown
             isRecording = true;
 
             if (!isMetronomePlaying)
@@ -142,7 +143,7 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
             playback.startRecording();
             playback.playSelected();
 
-            loopTimelineView.updateCursorPosition(0);
+            looper.startLoop();
         }, (long) (metronome.getBeatInterval() * countdownBeats));
     }
 

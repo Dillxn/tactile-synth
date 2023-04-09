@@ -76,11 +76,16 @@ public class Looper {
                         Log.d("Looper", "Stopping and starting playback in loop");
                         Log.d("Looper", "Loop interval: " + loopInterval);
                         playback.stopSelected();
-                        playback.playSelected();
+
 
                         if (playback.isRecording()) {
                             playback.addRecording();
+                            playback.startRecording();
                         }
+
+                        playback.playSelected();
+
+
 
                         loopHandler.postDelayed(this, loopInterval);
                     }
@@ -108,6 +113,7 @@ public class Looper {
         isLooping = false;
         loopHandler.removeCallbacks(loopRunnable);
         cursorHandler.removeCallbacks(cursorRunnable);
+        notifyProgressListeners(0);
         Log.d("Looper", "Loop stopped");
     }
 
