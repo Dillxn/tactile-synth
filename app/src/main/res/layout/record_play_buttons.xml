@@ -1,28 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/metronomeToggle"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:background="@drawable/btn_metronome" />
 
     <Button
         android:id="@+id/armRecording"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/playRecording"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias=".5"
-        android:layout_marginEnd="15dp"
-        android:background="@color/disarmed" />
+        android:layout_marginStart="15dp"
+        android:background="@drawable/btn_record" />
 
     <Button
         android:id="@+id/playRecording"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias=".5"
-        android:background="@color/readyToRecord" />
+        android:background="@drawable/btn_play" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <com.dillxn.tactilesynth.LoopTimelineView
+            android:id="@+id/loopTimelineView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+</LinearLayout>

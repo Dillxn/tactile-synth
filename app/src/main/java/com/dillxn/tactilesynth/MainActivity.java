@@ -1,5 +1,7 @@
 package com.dillxn.tactilesynth;
 
+import static android.app.PendingIntent.getActivity;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -12,6 +14,7 @@ import android.app.Activity;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -24,7 +27,12 @@ public class MainActivity extends FragmentActivity {
     static {
         System.loadLibrary("tactilesynth");
     }
-
+    
+    private native void startEngine();
+    
+    private native void stopEngine();
+    
+    
     FragmentManager fragmentManager = getSupportFragmentManager();
 
     VideoView background;
@@ -34,6 +42,7 @@ public class MainActivity extends FragmentActivity {
     public static PlaybackHandler playback;
 
     Database db;
+    Synth synth;
     boolean menu = false;
 
     float maxX = 0;
@@ -45,6 +54,20 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         db = Database.getInstance(this);
         playback = new PlaybackHandler(getApplicationContext().getFilesDir());
+
+
+        // get display res
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int xres = displayMetrics.widthPixels;
+        int yres = displayMetrics.heightPixels;
+
+        // Init synth
+        synth = new Synth(xres, yres, db);
+        
+        startEngine();
+        
+        
         // make fullscreen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
@@ -60,6 +83,7 @@ public class MainActivity extends FragmentActivity {
                 mediaPlayer.setLooping(true);
             }
         });
+
 
 
         fragmentManager.beginTransaction().replace(R.id.fragmentContainerView, SynthFragment.class, null, "synthPrime")
@@ -100,5 +124,11 @@ public class MainActivity extends FragmentActivity {
         Uri bgUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.background);
         background.setVideoURI(bgUri);
         background.start();
+    }
+    
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopEngine();
     }
 }

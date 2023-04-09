@@ -58,12 +58,14 @@
       "sensorEffects": {
         "gyroscope": {
           "x": ["voices"],
-          "y": ["reverb"],
-          "z": ["filter"]
+          "y": ["reverb", "delay"],
+          "z": ["filter", "tremolo"]
         }
       },
       "gridState": false,
-      "debugState": false
+      "debugState": false,
+      "bpm": 140,
+      "barsLength": 4
     }
   ],
   "effects": [ "reverb", "filter", "voices", "delay", "tremolo" ]

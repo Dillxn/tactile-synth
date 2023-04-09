@@ -26,6 +26,11 @@ import java.io.PrintWriter;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 
@@ -56,11 +61,15 @@ public class PlaybackHandler {
     ArrayList<float[]> selectedRecordings = new ArrayList<>();
     ArrayList<float[]> recordings = new ArrayList<>();
     ArrayList<float[]> newRecordings = new ArrayList<>();
+    List<AudioTrack> playingAudioTracks = new CopyOnWriteArrayList<>();
     File dirPath;
     File recordingsBase;
     File recordingsFolderFile;
     int count = 0;
     String defaultFileName = "recording";
+
+    boolean isPlaying = false;
+    boolean isRecording = false;
 
     public PlaybackHandler(File dirPath) {
         this.dirPath = dirPath;
@@ -94,16 +103,8 @@ public class PlaybackHandler {
                 updateCount();
             }
         }
-        // WILL DELETE ALL RECORDINGS IF UNCOMMENTED, TESTING PURPOSES
-        /*
-         * for(File f : recordingsFolderFile.listFiles()){
-         * f.delete();
-         * }
-         */
-        System.out.println("hello");
 
         instance = this;
-        // solid break point
     }
 
     public ArrayList<float[]> getRecordings() {
@@ -188,16 +189,12 @@ public class PlaybackHandler {
         float[] temp = getRecordedAudioData();
         recordings.add(temp);
         selectedRecordings.add(temp);
+        isRecording = false;
     }
 
     public void startRecording() {
         startRecord();
-    }
-
-    public void playSelected() {
-        for (int i = 0; i < selectedRecordings.size(); i++) {
-            play(selectedRecordings.get(i));
-        }
+        isRecording = true;
     }
 
     public void flushSelected() {
@@ -223,6 +220,8 @@ public class PlaybackHandler {
                 .setBufferSizeInBytes(bufferSize)
                 .build();
 
+        playingAudioTracks.add(audioTrack);
+
         if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
             new Thread(new Runnable() {
                 public void run() {
@@ -230,6 +229,7 @@ public class PlaybackHandler {
                     audioTrack.write(data, 0, data.length, AudioTrack.WRITE_BLOCKING);
                     audioTrack.stop();
                     audioTrack.release();
+                    playingAudioTracks.remove(audioTrack);
                 }
             }).start();
         } else {
@@ -275,4 +275,32 @@ public class PlaybackHandler {
         }
         return true;
     }
+    
+    public void playSelected() {
+        for (float[] recording : selectedRecordings) {
+            play(recording);
+        }
+        isPlaying = true;
+    }
+
+    public void stopSelected() {
+        for (AudioTrack audioTrack : playingAudioTracks) {
+            if (audioTrack != null && audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
+                audioTrack.stop();
+                audioTrack.flush();
+                audioTrack.setPlaybackHeadPosition(0);
+            }
+        }
+        playingAudioTracks.clear();
+        isPlaying = false;
+    }
+
+    public boolean isPlaying() {
+        return isPlaying; // Assuming 'isPlaying' is a boolean variable in the PlaybackHandler class that is set when audio tracks are playing.
+    }
+
+    public boolean isRecording() {
+        return isRecording;
+    }
+
 }
