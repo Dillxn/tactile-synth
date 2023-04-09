@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class RecordPlayButtons extends FrameLayout implements Looper.ProgressListener {
     private Button armRecordingBtn;
     private Button playStopButton;
@@ -116,31 +118,39 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
         // Countdown
         int countdownBeats = 4;
         playStopButton.setEnabled(false); // Disable the button during countdown
-        metronome.playMetronome(); // Play the metronome during countdown
-
 
         Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            // Start Recording
-            shouldUpdateCursorPosition = true;
-            playStopButton.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.btn_stop_active));
-            playStopButton.setEnabled(true); // Enable the button after countdown
-            isRecording = true;
+        Runnable countdownRunnable = new Runnable() {
+            int remainingBeats = countdownBeats;
 
-            if (!isMetronomePlaying)
-                metronome.stopMetronome();
+            @Override
+            public void run() {
+                boolean isDownbeat = remainingBeats == countdownBeats; // Set to true on the first beat of the countdown
 
-            playback.startRecording();
-            playback.playSelected();
 
-            looper.startLoop(isRecording, isMetronomePlaying);
-        }, (long) (metronome.getBeatInterval() * countdownBeats));
+                if (remainingBeats > 0) {
+                    // Play metronome sound on each beat of the countdown
+                    metronome.playSound(isDownbeat);
+                    remainingBeats--;
+                    handler.postDelayed(this, (long) metronome.getBeatInterval());
+                } else {
+                    // Start Recording on the 5th beat
+                    shouldUpdateCursorPosition = true;
+                    playStopButton.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.btn_stop_active));
+                    playStopButton.setEnabled(true); // Enable the button after countdown
+                    isRecording = true;
+
+                    looper.startLoop(isRecording, isMetronomePlaying);
+                }
+            }
+        };
+
+        handler.postDelayed(countdownRunnable, (long) metronome.getBeatInterval());
     }
 
     private void stopRecording() {
         isRecording = false;
         playback.addRecording();
-        metronome.stopMetronome();
     }
 
     private void toggleMetronome() {
