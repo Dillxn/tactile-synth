@@ -187,9 +187,23 @@ public class PlaybackHandler {
     public void addRecording() {
         stopRecord();
         float[] temp = getRecordedAudioData();
-        recordings.add(temp);
-        selectedRecordings.add(temp);
+        
+        // only add if not silent
+        if (!isSilent(temp, 0.01f)) {
+            recordings.add(temp);
+            selectedRecordings.add(temp);
+        }
+    
         isRecording = false;
+    }
+    
+    private boolean isSilent(float[] audioData, float silenceThreshold) {
+        for (float sample : audioData) {
+            if (Math.abs(sample) > silenceThreshold) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void startRecording() {

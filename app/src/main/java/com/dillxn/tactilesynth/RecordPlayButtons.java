@@ -53,7 +53,7 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
         playStopButton.setOnClickListener(view -> playStop());
 
         playback = PlaybackHandler.getInstance();
-        metronome = new Metronome();
+        metronome = Metronome.getInstance();
 
         metronomeToggle = findViewById(R.id.metronomeToggle);
         metronomeToggle.setOnClickListener(view -> toggleMetronome());
@@ -92,11 +92,7 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
             startRecording();
         } else {
             shouldUpdateCursorPosition = true;
-            playback.playSelected();
-            if (isMetronomePlaying) {
-                metronome.playMetronome();
-            }
-            looper.startLoop();
+            looper.startLoop(isRecording, isMetronomePlaying);
         }
 
     }
@@ -111,13 +107,7 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
             stopRecording();
         }
 
-        playback.stopSelected();
-        if (isMetronomePlaying) {
-            metronome.stopMetronome();
-        }
-
         looper.stopLoop();
-
         loopTimelineView.updateCursorPosition(0);
 
     }
@@ -143,7 +133,7 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
             playback.startRecording();
             playback.playSelected();
 
-            looper.startLoop();
+            looper.startLoop(isRecording, isMetronomePlaying);
         }, (long) (metronome.getBeatInterval() * countdownBeats));
     }
 

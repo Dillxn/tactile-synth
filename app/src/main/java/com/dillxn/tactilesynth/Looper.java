@@ -8,116 +8,122 @@ import java.util.List;
 
 public class Looper {
 
-    private static Looper instance;
-    private List<ProgressListener> progressListeners;
-    public static synchronized Looper getInstance(LoopTimelineView loopTimelineView) {
-        if (instance == null) {
-            instance = new Looper(loopTimelineView);
-        }
-        return instance;
-    }
-    public interface ProgressListener {
-        void onProgressUpdate(float progress);
-    }
+	private static Looper instance;
+	private List<ProgressListener> progressListeners;
 
-    public void addProgressListener(ProgressListener listener) {
-        progressListeners.add(listener);
-    }
+	public static synchronized Looper getInstance(LoopTimelineView loopTimelineView) {
+		if (instance == null) {
+			instance = new Looper(loopTimelineView);
+		}
+		return instance;
+	}
 
-    public void removeProgressListener(ProgressListener listener) {
-        progressListeners.remove(listener);
-    }
+	public interface ProgressListener {
+		void onProgressUpdate(float progress);
+	}
 
-    private void notifyProgressListeners(float progress) {
-        for (ProgressListener listener : progressListeners) {
-            listener.onProgressUpdate(progress);
-        }
-    }
+	public void addProgressListener(ProgressListener listener) {
+		progressListeners.add(listener);
+	}
 
-    private int barsLength;
-    private long loopInterval;
-    private boolean isLooping = false;
-    public boolean loopEnabled = true;
-    private PlaybackHandler playback;
-    private Handler loopHandler;
-    private Handler cursorHandler;
-    private Runnable loopRunnable;
-    private Runnable cursorRunnable;
+	public void removeProgressListener(ProgressListener listener) {
+		progressListeners.remove(listener);
+	}
 
-    private LoopTimelineView loopTimelineView;
-    private long startTime;
+	private void notifyProgressListeners(float progress) {
+		for (ProgressListener listener : progressListeners) {
+			listener.onProgressUpdate(progress);
+		}
+	}
 
-    public Looper(LoopTimelineView loopTimelineView) {
-        barsLength = Database.getInstance().getPreset().optInt("barsLength");
-        playback = PlaybackHandler.getInstance();
-        loopHandler = new Handler();
-        cursorHandler = new Handler();
-        calculateLoopInterval();
-        this.loopTimelineView = loopTimelineView;
-        progressListeners = new ArrayList<>();
-    }
+	private int barsLength;
+	private long loopInterval;
+	private PlaybackHandler playback;
+	private Handler loopHandler;
+	private Handler cursorHandler;
+	private Runnable loopRunnable;
+	private Runnable cursorRunnable;
 
-    private void calculateLoopInterval() {
-        loopInterval = (long) (Metronome.getInstance().getBeatInterval() * 4 * barsLength);
-    }
+	private LoopTimelineView loopTimelineView;
+	private long startTime;
+	private int beatCount = 0;
 
-    public void setLoopEnabled(boolean enabled) {
-        loopEnabled = enabled;
-    }
+	public Looper(LoopTimelineView loopTimelineView) {
+		barsLength = Database.getInstance().getPreset().optInt("barsLength");
+		playback = PlaybackHandler.getInstance();
+		loopHandler = new Handler();
+		cursorHandler = new Handler();
+		calculateLoopInterval();
+		this.loopTimelineView = loopTimelineView;
+		progressListeners = new ArrayList<>();
+	}
 
-    public void startLoop() {
-        startTime = System.currentTimeMillis();
-        if (loopEnabled) {
-            isLooping = true;
-            loopRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    if (isLooping) {
-                        Log.d("Looper", "Stopping and starting playback in loop");
-                        Log.d("Looper", "Loop interval: " + loopInterval);
-                        playback.stopSelected();
+	private void calculateLoopInterval() {
+		loopInterval = (long) (Metronome.getInstance().getBeatInterval() * 4 * barsLength);
+	}
 
+	public void startLoop(boolean shouldRecord, boolean metronomeEnabled) {
+		beatCount = 0;
+		startTime = System.currentTimeMillis();
+		loopRunnable = new Runnable() {
+			@Override
+			public void run() {
+				
+					if (beatCount == 0) {
+						// Start recording on first beat
+						if (shouldRecord) {
+							playback.startRecording();
+						}
+						playback.playSelected();
+						
+					}
+					else if (beatCount % (4 * barsLength) == 0) {
+						// first beat of loop n
+						if (shouldRecord) {
+							// Stop recording, add it to recordings
+							playback.addRecording();
+							// Start recording again
+							playback.startRecording();
+						}
+						
+						playback.stopSelected();
+						playback.playSelected();
+					}
+				
+					// Play metronome sound
+					boolean isDownBeat = beatCount % 4 == 0;
+					if (metronomeEnabled)
+						Metronome.getInstance().playSound(isDownBeat);
 
-                        if (playback.isRecording()) {
-                            playback.addRecording();
-                            playback.startRecording();
-                        }
+					
+					beatCount++;
+					loopHandler.postDelayed(this, (long) Metronome.getInstance().getBeatInterval());
+			}
+		};
+		loopHandler.postDelayed(loopRunnable, 0);
+		Log.d("Looper", "Loop started");
 
-                        playback.playSelected();
+		cursorRunnable = new Runnable() {
+			@Override
+			public void run() {
+					long elapsedTime = System.currentTimeMillis() - startTime;
+					float progress = ((float) elapsedTime / loopInterval) % 1;
+					notifyProgressListeners(progress);
+					cursorHandler.postDelayed(this, 50); // Update every 50 ms for smooth animation
+			}
+		};
+		cursorHandler.postDelayed(cursorRunnable, 50);
+	}
 
+	public void stopLoop() {
+		loopHandler.removeCallbacks(loopRunnable);
+		cursorHandler.removeCallbacks(cursorRunnable);
+		playback.stopSelected();
+		notifyProgressListeners(0);
+		Log.d("Looper", "Loop stopped");
+	}
 
-
-                        loopHandler.postDelayed(this, loopInterval);
-                    }
-                }
-            };
-            loopHandler.postDelayed(loopRunnable, loopInterval);
-            Log.d("Looper", "Loop started");
-
-            cursorRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    if (isLooping) {
-                        long elapsedTime = System.currentTimeMillis() - startTime;
-                        float progress = ((float) elapsedTime / loopInterval) % 1;
-                        notifyProgressListeners(progress);
-                        cursorHandler.postDelayed(this, 50); // Update every 50 ms for smooth animation
-                    }
-                }
-            };
-            cursorHandler.postDelayed(cursorRunnable, 50);
-        }
-    }
-
-    public void stopLoop() {
-        isLooping = false;
-        loopHandler.removeCallbacks(loopRunnable);
-        cursorHandler.removeCallbacks(cursorRunnable);
-        notifyProgressListeners(0);
-        Log.d("Looper", "Loop stopped");
-    }
-
-    public void setLoopInterval(long interval) {
-        loopInterval = interval;
-    }
+	public void setLoopInterval(long interval) {
+		loopInterval = interval;
+	}
 }

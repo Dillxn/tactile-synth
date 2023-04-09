@@ -8,7 +8,7 @@ import android.util.Log;
 
 public class Metronome {
     private int sampleRate;
-    private int beat;
+    private int bpm;
     private AudioTrack audioTrack;
     private boolean isPlaying = false;
     
@@ -23,17 +23,16 @@ public class Metronome {
     public Metronome() {
         
         sampleRate = Synth.getInstance().getSampleRate();
-        beat = Database.getInstance().getPreset().optInt("bpm");
+        bpm = Database.getInstance().getPreset().optInt("bpm");
 
         createAudioTrack();
-        
-        instance = this;
+
     }
 
     // getBeatInterval() returns the time in milliseconds between each beat
     public double getBeatInterval() {
         //60,000 milliseconds in a minute
-        return 60000.0 / beat;
+        return 60000.0 / bpm;
     }
 
     private void createAudioTrack() {
@@ -58,7 +57,6 @@ public class Metronome {
         if (!isPlaying) {
             isPlaying = true;
             audioTrack.play();
-            playLoop();
         }
 
         Log.d("Metronome", "Playing metronome");
@@ -72,33 +70,29 @@ public class Metronome {
             audioTrack.flush(); // Add this line to clear the audio buffer
             audioTrack.setPlaybackHeadPosition(0);
         }
-        beatCounter = 0;
     }
 
-    private void playLoop() {
-        double interval = getBeatInterval();
-        Handler handler = new Handler();
-    
-        Runnable metronomeRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (isPlaying) {
-                    playSound();
-                    handler.postDelayed(this, (long) interval);
-                }
-            }
-        };
-        handler.postDelayed(metronomeRunnable, 0); // Change the delay to 0 for the first beat
-    }
 
-    private int beatCounter = 0;
 
-    private void playSound() {
-        boolean isDownBeat = beatCounter % 4 == 0; // Assume 4 beats per bar
+    public void playSound(boolean isDownBeat) {
+        System.out.println("Playsound called");
+
+        if (!isPlaying) {
+            isPlaying = true;
+            audioTrack.play();
+        }
+
         short[] soundBuffer = createMetronomeSound(isDownBeat);
         audioTrack.write(soundBuffer, 0, soundBuffer.length);
 
-        beatCounter++; // Increment the beat counter
+        // Stop the AudioTrack after a small delay to let the sound play fully
+        new Handler().postDelayed(() -> {
+            if (isPlaying) {
+                isPlaying = false;
+                audioTrack.pause();
+                audioTrack.setPlaybackHeadPosition(0);
+            }
+        }, 150); // Adjust the delay as needed
     }
 
 
