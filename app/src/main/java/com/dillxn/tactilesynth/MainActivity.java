@@ -53,7 +53,6 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = Database.getInstance(this);
-        playback = new PlaybackHandler(getApplicationContext().getFilesDir());
 
 
         // get display res
@@ -64,8 +63,11 @@ public class MainActivity extends FragmentActivity {
 
         // Init synth
         synth = new Synth(xres, yres, db);
-        
+
         startEngine();
+
+
+        playback = new PlaybackHandler(getApplicationContext().getFilesDir());
         
         
         // make fullscreen
