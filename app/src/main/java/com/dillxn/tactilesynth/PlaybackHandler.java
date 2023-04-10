@@ -103,6 +103,9 @@ public class PlaybackHandler {
         }
         count = largestCount+1;
     }
+    public void delete(float[] data){
+//@TODO: add this feature and the buttons to accompany it
+    }
     private int getFileNumber(String s){
         return Integer.valueOf(s.substring(9,s.length()-4));
     }
