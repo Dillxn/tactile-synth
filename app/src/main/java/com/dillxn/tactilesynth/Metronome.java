@@ -53,27 +53,6 @@ public class Metronome {
         audioTrack.setVolume(volume);
     }
 
-    public void playMetronome() {
-        if (!isPlaying) {
-            isPlaying = true;
-            audioTrack.play();
-        }
-
-        Log.d("Metronome", "Playing metronome");
-    }
-
-    public void stopMetronome() {
-        if (isPlaying) {
-            isPlaying = false;
-            audioTrack.pause(); // Add this line to pause the playback before stopping
-            audioTrack.stop();
-            audioTrack.flush(); // Add this line to clear the audio buffer
-            audioTrack.setPlaybackHeadPosition(0);
-        }
-    }
-
-
-
     public void playSound(boolean isDownBeat) {
         System.out.println("Playsound called");
 
