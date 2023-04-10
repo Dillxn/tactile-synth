@@ -3,6 +3,7 @@ package com.dillxn.tactilesynth;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -12,31 +13,32 @@ import android.widget.LinearLayout;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class EffectsMenuView extends BaseCustomView {
+public class EffectsMenuView extends LinearLayout {
 
     private LinearLayout axisButtonsContainer;
     private LinearLayout effectsContainer;
 
     public EffectsMenuView(Context context) {
         super(context);
+        init(context);
     }
 
     public EffectsMenuView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+        init(context);
     }
 
     @SuppressLint("ViewConstructor")
     public EffectsMenuView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        // Your initialization code here
+        init(context);
     }
 
-    @Override
-    protected int getLayoutResId() {
-        return R.layout.effects_menu_content;
+    private void init(Context context) {
+        LayoutInflater.from(context).inflate(R.layout.effects_menu_content, this, true);
+        onInit();
     }
 
-    @Override
     protected void onInit() {
         axisButtonsContainer = findViewById(R.id.axis_buttons_container);
         effectsContainer = findViewById(R.id.effects_container);
@@ -65,6 +67,7 @@ public class EffectsMenuView extends BaseCustomView {
         // Initialize the effects for the default axis (e.g., X-axis)
         onAxisButtonClick(axisXButton);
     }
+
 
     private void onAxisButtonClick(View view) {
         String axis = (String) view.getTag();        
