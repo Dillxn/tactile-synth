@@ -48,8 +48,14 @@ public class Synth {
     public native int getSampleRate();
     public native int getBufferSize();
 
-
     Database db;
+    public static Synth instance;
+    public static synchronized Synth getInstance() {
+        if (instance == null) {
+            throw new RuntimeException("Synth not initialized");
+        }
+        return instance;
+    }
 
     // class variables
     int MAX_POINTERS = 5;
@@ -78,6 +84,8 @@ public class Synth {
         for (int i = 0; i < MAX_POINTERS; i++) {
             //setOscPhase(i, phaseGen.nextDouble());
         }
+        
+        instance = this;
     }
 
     public void touchEvent(MotionEvent event) {

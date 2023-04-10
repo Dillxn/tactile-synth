@@ -11,4 +11,8 @@
     <color name="disarmed">#FFBBBBBB</color>
     <color name="recording">#FFf59c02</color>
     <color name="readyToRecord">#FF00FF00</color>
+    <color name="readyToPlay">#FF00FF00</color>
+    <color name="Playing">#FF00FFFF</color>
+    <color name="metronomeOn">#FF7F00</color>
+    <color name="metronomeOff">#D3A77B</color>
 </resources>

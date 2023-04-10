@@ -37,12 +37,6 @@ import java.util.Collections;
 
 public class SynthFragment extends Fragment implements SensorEventListener {
 
-    static {
-        System.loadLibrary("tactilesynth");
-    }
-
-    private native void startEngine();
-    private native void stopEngine();
 
     Synth synth;
     Database db;
@@ -86,19 +80,11 @@ public class SynthFragment extends Fragment implements SensorEventListener {
 
         db = Database.getInstance();
 
-        // get display res
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int xres = displayMetrics.widthPixels;
-        int yres = displayMetrics.heightPixels;
-
         // Init synth
-        synth = new Synth(xres, yres, db);
+        synth = Synth.getInstance();
 
         // start sensor listening
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-
-        startEngine();
     }
 
 
@@ -251,12 +237,6 @@ public class SynthFragment extends Fragment implements SensorEventListener {
             sensorManager.registerListener(this, magneticFieldSensor,
                     SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        stopEngine();
-        super.onDestroy();
     }
 
     public void updateOrientationAngles() {
