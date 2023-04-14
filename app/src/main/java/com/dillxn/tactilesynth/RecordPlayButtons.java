@@ -16,7 +16,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class RecordPlayButtons extends FrameLayout implements /* Looper.ProgressListener */NewLooper.ProgressListener /* !!!!!!!!! TEST !!!!!!!!! */{
+public class RecordPlayButtons extends FrameLayout implements Looper.ProgressListener {
     private Button armRecordingBtn;
     private Button playStopButton;
     private boolean isRecordingArmed = false;
@@ -32,8 +32,7 @@ public class RecordPlayButtons extends FrameLayout implements /* Looper.Progress
 
     private Button metronomeToggle;
 
-    //private Looper looper;
-    private NewLooper nl; // !!!!!!!!! TEST !!!!!!!!!
+    private Looper looper;
 
     private LoopTimelineView loopTimelineView;
 
@@ -68,11 +67,8 @@ public class RecordPlayButtons extends FrameLayout implements /* Looper.Progress
         loopTimelineView = findViewById(R.id.loopTimelineView);
 
         // !!!!!!!!!!! TEST !!!!!!!!!!!
-        nl = NewLooper.getInstance(loopTimelineView);
-        nl.addProgressListener((NewLooper.ProgressListener) this);
-
-        //looper = Looper.getInstance(loopTimelineView);
-        //looper.addProgressListener((Looper.ProgressListener) this);
+        looper = Looper.getInstance(loopTimelineView);
+        looper.addProgressListener((Looper.ProgressListener) this);
 
         loopTimelineView.updateCursorPosition(0);
 
@@ -102,7 +98,7 @@ public class RecordPlayButtons extends FrameLayout implements /* Looper.Progress
             startRecording();
         } else {
             shouldUpdateCursorPosition = true;
-            nl.startLoop(isRecording, isMetronomePlaying); // !!!!!!!!! TEST !!!!!!!!!!
+            looper.startLoop(isRecording, isMetronomePlaying); // !!!!!!!!! TEST !!!!!!!!!!
             //looper.startLoop(isRecording, isMetronomePlaying);
         }
 
@@ -118,7 +114,7 @@ public class RecordPlayButtons extends FrameLayout implements /* Looper.Progress
             stopRecording();
         }
 
-        nl.stopLoop(); // !!!!!!!!! TEST !!!!!!!!!
+        looper.stopLoop(); // !!!!!!!!! TEST !!!!!!!!!
         //looper.stopLoop();
         loopTimelineView.updateCursorPosition(0);
 
@@ -150,7 +146,7 @@ public class RecordPlayButtons extends FrameLayout implements /* Looper.Progress
                     });
                     isRecording = true;
 
-                    nl.startLoop(isRecording, isMetronomePlaying); // !!!!!!!!! TEST !!!!!!!!!
+                    looper.startLoop(isRecording, isMetronomePlaying); // !!!!!!!!! TEST !!!!!!!!!
                     //looper.startLoop(isRecording, isMetronomePlaying);
 
                     // Cancel the Timer when done

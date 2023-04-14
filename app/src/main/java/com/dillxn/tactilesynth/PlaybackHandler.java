@@ -241,6 +241,17 @@ public class PlaybackHandler {
                 public void run() {
                     audioTrack.play();
                     audioTrack.write(data, 0, data.length, AudioTrack.WRITE_BLOCKING);
+
+                    // Calculate the duration of the audio data in milliseconds
+                    long duration = (long) (data.length * 1000.0 / sampleRate);
+
+                    // Sleep for the duration of the audio
+                    try {
+                        Thread.sleep(duration);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                     audioTrack.stop();
                     audioTrack.release();
                     playingAudioTracks.remove(audioTrack);
@@ -289,11 +300,15 @@ public class PlaybackHandler {
         }
         return true;
     }
-    
+
     public void playSelected() {
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(selectedRecordings.size());
+
         for (float[] recording : selectedRecordings) {
-            play(recording);
+            executorService.execute(() -> play(recording));
         }
+
+        executorService.shutdown();
         isPlaying = true;
     }
 
