@@ -12,9 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class RecordPlayButtons extends FrameLayout implements Looper.ProgressListener {
+public class RecordPlayButtons extends FrameLayout implements /* Looper.ProgressListener */NewLooper.ProgressListener /* !!!!!!!!! TEST !!!!!!!!! */{
     private Button armRecordingBtn;
     private Button playStopButton;
     private boolean isRecordingArmed = false;
@@ -30,7 +32,8 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
 
     private Button metronomeToggle;
 
-    private Looper looper;
+    //private Looper looper;
+    private NewLooper nl; // !!!!!!!!! TEST !!!!!!!!!
 
     private LoopTimelineView loopTimelineView;
 
@@ -64,8 +67,13 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
         // set up looping
         loopTimelineView = findViewById(R.id.loopTimelineView);
 
-        looper = Looper.getInstance(loopTimelineView);
-        looper.addProgressListener((Looper.ProgressListener) this);
+        // !!!!!!!!!!! TEST !!!!!!!!!!!
+        nl = NewLooper.getInstance(loopTimelineView);
+        nl.addProgressListener((NewLooper.ProgressListener) this);
+
+        //looper = Looper.getInstance(loopTimelineView);
+        //looper.addProgressListener((Looper.ProgressListener) this);
+
         loopTimelineView.updateCursorPosition(0);
 
     }
@@ -94,7 +102,8 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
             startRecording();
         } else {
             shouldUpdateCursorPosition = true;
-            looper.startLoop(isRecording, isMetronomePlaying);
+            nl.startLoop(isRecording, isMetronomePlaying); // !!!!!!!!! TEST !!!!!!!!!!
+            //looper.startLoop(isRecording, isMetronomePlaying);
         }
 
     }
@@ -109,7 +118,8 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
             stopRecording();
         }
 
-        looper.stopLoop();
+        nl.stopLoop(); // !!!!!!!!! TEST !!!!!!!!!
+        //looper.stopLoop();
         loopTimelineView.updateCursorPosition(0);
 
     }
@@ -119,34 +129,39 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
         int countdownBeats = 4;
         playStopButton.setEnabled(false); // Disable the button during countdown
 
-        Handler handler = new Handler();
-        Runnable countdownRunnable = new Runnable() {
+        Timer countdownTimer = new Timer();
+        TimerTask countdownTask = new TimerTask() {
             int remainingBeats = countdownBeats;
 
             @Override
             public void run() {
                 boolean isDownbeat = remainingBeats == countdownBeats; // Set to true on the first beat of the countdown
 
-
                 if (remainingBeats > 0) {
                     // Play metronome sound on each beat of the countdown
                     metronome.playSound(isDownbeat);
                     remainingBeats--;
-                    handler.postDelayed(this, (long) metronome.getBeatInterval());
                 } else {
                     // Start Recording on the 5th beat
                     shouldUpdateCursorPosition = true;
-                    playStopButton.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.btn_stop_active));
-                    playStopButton.setEnabled(true); // Enable the button after countdown
+                    post(() -> {
+                        playStopButton.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.btn_stop_active));
+                        playStopButton.setEnabled(true); // Enable the button after countdown
+                    });
                     isRecording = true;
 
-                    looper.startLoop(isRecording, isMetronomePlaying);
+                    nl.startLoop(isRecording, isMetronomePlaying); // !!!!!!!!! TEST !!!!!!!!!
+                    //looper.startLoop(isRecording, isMetronomePlaying);
+
+                    // Cancel the Timer when done
+                    countdownTimer.cancel();
                 }
             }
         };
 
-        handler.postDelayed(countdownRunnable, (long) metronome.getBeatInterval());
+        countdownTimer.schedule(countdownTask, (long) metronome.getBeatInterval(), (long) metronome.getBeatInterval());
     }
+
 
     private void stopRecording() {
         isRecording = false;

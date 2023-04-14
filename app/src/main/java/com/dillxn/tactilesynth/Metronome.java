@@ -4,6 +4,8 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Handler;
+import java.util.Timer;
+import java.util.TimerTask;
 import android.util.Log;
 
 public class Metronome {
@@ -65,11 +67,14 @@ public class Metronome {
         audioTrack.write(soundBuffer, 0, soundBuffer.length);
 
         // Stop the AudioTrack after a small delay to let the sound play fully
-        new Handler().postDelayed(() -> {
-            if (isPlaying) {
-                isPlaying = false;
-                audioTrack.pause();
-                audioTrack.setPlaybackHeadPosition(0);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (isPlaying) {
+                    isPlaying = false;
+                    audioTrack.pause();
+                    audioTrack.setPlaybackHeadPosition(0);
+                }
             }
         }, 150); // Adjust the delay as needed
     }

@@ -23,7 +23,7 @@
         android:id="@+id/playRecording"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:background="@drawable/btn_play" />
+        android:background="@android:drawable/ic_media_play" />
 
     <FrameLayout
         android:layout_width="0dp"
