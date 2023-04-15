@@ -220,7 +220,7 @@ public class PlaybackHandler {
 
         final int channelConfig = AudioFormat.CHANNEL_OUT_MONO;
         final int audioFormat = AudioFormat.ENCODING_PCM_FLOAT;
-        final int bufferSize = getBufferSize();
+        final int bufferSize = AudioTrack.getMinBufferSize(sampleRate, channelConfig, audioFormat);
         final AudioTrack audioTrack = new AudioTrack.Builder()
                 .setAudioAttributes(new AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_MEDIA)
@@ -232,6 +232,7 @@ public class PlaybackHandler {
                         .setChannelMask(channelConfig)
                         .build())
                 .setBufferSizeInBytes(bufferSize)
+                .setTransferMode(AudioTrack.MODE_STREAM)
                 .build();
 
         playingAudioTracks.add(audioTrack);
@@ -241,17 +242,6 @@ public class PlaybackHandler {
                 public void run() {
                     audioTrack.play();
                     audioTrack.write(data, 0, data.length, AudioTrack.WRITE_BLOCKING);
-
-                    // Calculate the duration of the audio data in milliseconds
-                    long duration = (long) (data.length * 1000.0 / sampleRate);
-
-                    // Sleep for the duration of the audio
-                    try {
-                        Thread.sleep(duration);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
                     audioTrack.stop();
                     audioTrack.release();
                     playingAudioTracks.remove(audioTrack);
