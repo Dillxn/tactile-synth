@@ -80,7 +80,7 @@ public class Metronome {
     }
 
 
-    private short[] createMetronomeSound(boolean isDownBeat) {
+    public short[] createMetronomeSound(boolean isDownBeat) {
         double frequency = 1000.0;
         double duration = 0.1; // 100ms sound
         int numSamples = (int) (duration * sampleRate);
@@ -104,6 +104,8 @@ public class Metronome {
         return outputBuffer;
     }
 
-
+    public void setAudioTrack(AudioTrack audioTrack) {
+        this.audioTrack = audioTrack;
+    }
 
 }

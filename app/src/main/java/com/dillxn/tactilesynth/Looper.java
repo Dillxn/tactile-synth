@@ -61,7 +61,7 @@ public class Looper {
 		loopInterval = (long) (Metronome.getInstance().getBeatInterval() * 4 * barsLength);
 	}
 
-	public void startLoop(boolean shouldRecord, boolean metronomeEnabled) {
+	public void startLoop(boolean shouldRecord) {
 		beatCount = 0;
 		startTime = System.currentTimeMillis();
 
@@ -92,7 +92,7 @@ public class Looper {
 
 				// Play metronome sound
 				boolean isDownBeat = beatCount % 4 == 0;
-				if (metronomeEnabled)
+				if (RecordPlayButtons.getInstance().isMetronomePlaying)
 					Metronome.getInstance().playSound(isDownBeat);
 
 				// notify progress listeners

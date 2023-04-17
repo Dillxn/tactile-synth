@@ -22,10 +22,19 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
     private boolean isRecordingArmed = false;
     private boolean isRecording = false;
     private boolean isPlaying = false;
-    private boolean isMetronomePlaying = false;
+    public boolean isMetronomePlaying = false;
     private boolean shouldUpdateCursorPosition = false;
     private Context mContext;
-
+    
+    private static RecordPlayButtons instance;
+    public static synchronized RecordPlayButtons getInstance() {
+        if (instance == null) {
+            throw new RuntimeException("RecordPlayButtons not initialized");
+        }
+        return instance;
+    }
+    
+    
     private PlaybackHandler playback;
 
     private Metronome metronome;
@@ -39,11 +48,13 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
     public RecordPlayButtons(@NonNull Context context) {
         super(context);
         init(context);
+        instance = this;
     }
 
     public RecordPlayButtons(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
+        instance = this;
     }
 
     private void init(Context context) {
@@ -98,8 +109,7 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
             startRecording();
         } else {
             shouldUpdateCursorPosition = true;
-            looper.startLoop(isRecording, isMetronomePlaying); // !!!!!!!!! TEST !!!!!!!!!!
-            //looper.startLoop(isRecording, isMetronomePlaying);
+            looper.startLoop(isRecording); 
         }
 
     }
@@ -146,7 +156,7 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
                     });
                     isRecording = true;
 
-                    looper.startLoop(isRecording, isMetronomePlaying); // !!!!!!!!! TEST !!!!!!!!!
+                    looper.startLoop(isRecording); // !!!!!!!!! TEST !!!!!!!!!
                     //looper.startLoop(isRecording, isMetronomePlaying);
 
                     // Cancel the Timer when done
