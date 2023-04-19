@@ -149,6 +149,8 @@ public class PlaybackHandler {
         for (float[] recording : newRecordings) {
             save(recording);
         }
+        newRecordings = new ArrayList<float[]>();
+        System.out.println("saveall called");
     }
 
     public float[] load(File file) {
@@ -184,6 +186,10 @@ public class PlaybackHandler {
         }
     }
 
+    public void stopRecording() {
+        stopRecord();
+    }
+
     public void addRecording() {
         stopRecord();
         float[] temp = getRecordedAudioData();
@@ -192,6 +198,7 @@ public class PlaybackHandler {
         if (!isSilent(temp, 0.01f)) {
             recordings.add(temp);
             selectedRecordings.add(temp);
+            newRecordings.add(temp);
         }
     
         isRecording = false;
@@ -255,36 +262,58 @@ public class PlaybackHandler {
     public void deleteRecording(float[] data) {
         // Find the index of the recording in the recordings list
         int index = recordings.indexOf(data);
-
+    
         if (index != -1) {
             // Remove the recording from the recordings list
             recordings.remove(index);
-
+            Log.d("deleteRecording", "Removed from recordings list");
+    
             // Remove the recording from the selectedRecordings list, if present
             selectedRecordings.remove(data);
-
+            Log.d("deleteRecording", "Removed from selectedRecordings list");
+    
+            // Remove from newRecordings list, if present
+            newRecordings.remove(data);
+            Log.d("deleteRecording", "Removed from newRecordings list");
+    
             // Find and delete the corresponding file for the recording
             File[] files = recordingsFolderFile.listFiles();
             for (File file : files) {
                 float[] loadedData = load(file);
                 if (arraysAreEqual(loadedData, data)) {
-                    file.delete();
+                    boolean isDeleted = file.delete();
+                    if (isDeleted) {
+                        Log.d("deleteRecording", "File deleted: " + file.getName());
+                    } else {
+                        Log.e("deleteRecording", "Failed to delete file: " + file.getName());
+                    }
                     break;
+                } else {
+                    Log.d("arrays are not equal", "arrays are not equal");
                 }
             }
-
+    
             // Update the count
             updateCount();
+        } else {
+            Log.e("deleteRecording", "Recording not found in the recordings list");
         }
     }
 
     private boolean arraysAreEqual(float[] arr1, float[] arr2) {
         if (arr1.length != arr2.length) {
+            Log.d("arraysAreEqual", "Length incorrect");
             return false;
         }
 
         for (int i = 0; i < arr1.length; i++) {
+            if (Float.isNaN(arr1[i]) && Float.isNaN(arr2[i])) {
+                continue;
+            }
             if (arr1[i] != arr2[i]) {
+                Log.d("arraysAreEqual", "data mismatch at index " + i);
+                Log.d("arraysAreEqual", arr1[i] + " " + arr2[i]);
+
                 return false;
             }
         }
@@ -305,9 +334,13 @@ public class PlaybackHandler {
     public void stopSelected() {
         for (AudioTrack audioTrack : playingAudioTracks) {
             if (audioTrack != null && audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
-                audioTrack.stop();
-                audioTrack.flush();
-                audioTrack.setPlaybackHeadPosition(0);
+                try {
+                    audioTrack.stop();
+                    audioTrack.flush();
+                    audioTrack.setPlaybackHeadPosition(0);
+                } catch (Exception e) {
+                    Log.e("PlaybackHandler", "Error stopping and flushing AudioTrack: ", e);
+                }
             }
         }
         playingAudioTracks.clear();

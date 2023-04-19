@@ -1,5 +1,6 @@
 package com.dillxn.tactilesynth;
 
+import android.os.Handler;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -32,9 +33,11 @@ public class Looper {
 	}
 
 	private void notifyProgressListeners(float progress) {
-		for (ProgressListener listener : progressListeners) {
-			listener.onProgressUpdate(progress);
-		}
+		uiHandler.post(() -> {
+			for (ProgressListener listener : progressListeners) {
+				listener.onProgressUpdate(progress);
+			}
+		});
 	}
 
 	private int barsLength;
@@ -47,6 +50,8 @@ public class Looper {
 	private long startTime;
 	private int beatCount = 0;
 
+	private Handler uiHandler;
+
 	public Looper(LoopTimelineView loopTimelineView) {
 		barsLength = Database.getInstance().getPreset().optInt("barsLength");
 		playback = PlaybackHandler.getInstance();
@@ -55,6 +60,7 @@ public class Looper {
 		calculateLoopInterval();
 		this.loopTimelineView = loopTimelineView;
 		progressListeners = new ArrayList<>();
+		uiHandler = new Handler(android.os.Looper.getMainLooper());
 	}
 
 	private void calculateLoopInterval() {

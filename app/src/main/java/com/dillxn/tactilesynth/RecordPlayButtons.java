@@ -20,7 +20,7 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
     private Button armRecordingBtn;
     private Button playStopButton;
     private boolean isRecordingArmed = false;
-    private boolean isRecording = false;
+    public boolean isRecording = false;
     private boolean isPlaying = false;
     public boolean isMetronomePlaying = false;
     private boolean shouldUpdateCursorPosition = false;
@@ -109,7 +109,7 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
             startRecording();
         } else {
             shouldUpdateCursorPosition = true;
-            looper.startLoop(isRecording); 
+            looper.startLoop(false);
         }
 
     }
@@ -127,7 +127,10 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
         looper.stopLoop(); // !!!!!!!!! TEST !!!!!!!!!
         //looper.stopLoop();
         loopTimelineView.updateCursorPosition(0);
-
+        // save
+        new Thread(() -> {
+            PlaybackHandler.getInstance().saveAll();
+        }).start();
     }
 
     private void startRecording() {
@@ -156,8 +159,7 @@ public class RecordPlayButtons extends FrameLayout implements Looper.ProgressLis
                     });
                     isRecording = true;
 
-                    looper.startLoop(isRecording); // !!!!!!!!! TEST !!!!!!!!!
-                    //looper.startLoop(isRecording, isMetronomePlaying);
+                    looper.startLoop(true);
 
                     // Cancel the Timer when done
                     countdownTimer.cancel();

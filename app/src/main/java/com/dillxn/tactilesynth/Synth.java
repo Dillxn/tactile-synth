@@ -75,7 +75,7 @@ public class Synth {
     int scaleLength = 7;
 
 
-
+    // Intializes the synth
     public Synth(int xres, int yres) {
         this.xres = xres;
         this.yres = yres;
@@ -88,6 +88,7 @@ public class Synth {
         instance = this;
     }
 
+    // Handles touch events
     public void touchEvent(MotionEvent event) {
 
         pointers = event.getPointerCount();
@@ -103,10 +104,11 @@ public class Synth {
             double frequency = getNoteFrequency(note);
             setOscFrequency(localPID, frequency);
         }
-
+        // check which action occurred
         switch (maskedAction) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN: {
+                // down
                 toggleOsc(pointerId, true);
                 break;
             }
@@ -118,6 +120,7 @@ public class Synth {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_CANCEL: {
+                // up
                 toggleOsc(pointerId, false);
                 break;
             }
@@ -229,40 +232,6 @@ public class Synth {
 
         for (int i = 0; i < MAX_POINTERS; i++) {
             setOscVoicesVolume(i, 0);
-        }
-    }
-
-    // play() - takes in recorded audio data and plays it in a separate thread
-    public void play(float[] data) {
-        final int sampleRate = getSampleRate();
-
-        final int channelConfig = AudioFormat.CHANNEL_OUT_MONO;
-        final int audioFormat = AudioFormat.ENCODING_PCM_FLOAT;
-        final int bufferSize = getBufferSize();
-        final AudioTrack audioTrack = new AudioTrack.Builder()
-                .setAudioAttributes(new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build())
-                .setAudioFormat(new AudioFormat.Builder()
-                        .setEncoding(audioFormat)
-                        .setSampleRate(sampleRate)
-                        .setChannelMask(channelConfig)
-                        .build())
-                .setBufferSizeInBytes(bufferSize)
-                .build();
-
-        if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
-            new Thread(new Runnable() {
-                public void run() {
-                    audioTrack.play();
-                    audioTrack.write(data, 0, data.length, AudioTrack.WRITE_BLOCKING);
-                    audioTrack.stop();
-                    audioTrack.release();
-                }
-            }).start();
-        } else {
-            Log.e("AudioTrack", "Failed to initialize AudioTrack");
         }
     }
 }
