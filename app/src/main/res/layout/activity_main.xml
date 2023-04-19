@@ -13,45 +13,27 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="30dp">
+        android:layout_height="50dp">
+
+        <com.dillxn.tactilesynth.RecordPlayButtons
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
 
         <ImageButton
             android:id="@+id/menuToggle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:backgroundTint="#00FFFFFF"
             android:onClick="menuToggle"
-            android:scaleType="center"
+            android:scaleType="centerCrop"
             android:src="@drawable/charm"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias=".5" />
-        <Button
-            android:id="@+id/armRecording"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:onClick="armRecording"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias=".5"
-            android:layout_marginRight="90sp"
-            android:background="@color/disarmed"
-            />
-
-        <Button
-            android:id="@+id/playRecording"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:onClick="startRecording"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias=".5"
-            android:layout_marginRight="50sp"
-            android:background="@color/readyToRecord"
-            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -91,7 +73,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5"
-            tools:layout="@layout/fragment_menu" />
+            tools:layout="@layout/fragment_synth" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

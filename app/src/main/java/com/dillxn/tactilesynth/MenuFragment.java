@@ -40,6 +40,7 @@ public class MenuFragment extends Fragment {
     TuningMenu tm;
     SettingsMenu sm;
 
+
     ArrayList<float[]> recordings = null;
     static RecordingsAdapter adapter = null;
 
@@ -75,13 +76,6 @@ public class MenuFragment extends Fragment {
         LinearLayout tuningMenu = (LinearLayout) view.findViewById(R.id.tuning_menu);
         LinearLayout effectsMenu = (LinearLayout) view.findViewById(R.id.effects_menu);
         LinearLayout recordingMenu = (LinearLayout) view.findViewById(R.id.recording_menu);
-        ListView recordingList = (ListView) view.findViewById(R.id.recording_list);
-        //somehow figure out how to update the listview with the recordings. or figure out another system to make it interactable
-        ArrayList<float[]> recordings = ((MainActivity) getActivity()).playback.getRecordings();
-        adapter = new RecordingsAdapter(getActivity(), recordings);
-        recordingList.setAdapter(adapter);
-        //temporary fix, need to figure out how to maintain persistence of checked settings.
-        ((MainActivity) getActivity()).playback.flushSelected();
 
         // GRABBING MENU BUTTONS AND MENU LAYOUTS
         Button[] menuButtons = {(Button) view.findViewById(R.id.settingsBtn),

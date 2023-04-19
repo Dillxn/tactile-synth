@@ -27,18 +27,18 @@ public class Synth {
     static {
         System.loadLibrary("tactilesynth");
     }
-    private native void toggleOsc(int oscId, boolean toggle);
-    private native boolean isOscDown(int oscId);
+    native void toggleOsc(int oscId, boolean toggle);
+    native boolean isOscDown(int oscId);
     private native void setOscFrequency(int oscId, double frequency);
     private native void setOscPhase(int oscId, double offset);
     private native void setOscVoices(int oscId, int voices);
     private native void setOscVoicesVolume(int oscId, double volume);
     private native void setOscSpread(int oscId, double spread);
-    private native void setReverb(double reverb);
+    native void setReverb(double reverb);
     private native void setBitCrush(double amount);
-    private native void setFilter(double amount);
+    native void setFilter(double amount);
     private native void setDelay(double amount);
-    private native void setTremolo(double amount);
+    native void setTremolo(double amount);
     private native void setOscVolume(int oscId, double volume);
     private native void setOscAttack(int oscId, double amount);
     public native void startRecord();   
@@ -48,8 +48,14 @@ public class Synth {
     public native int getSampleRate();
     public native int getBufferSize();
 
-
     Database db;
+    public static Synth instance;
+    public static synchronized Synth getInstance() {
+        if (instance == null) {
+            throw new RuntimeException("Synth not initialized");
+        }
+        return instance;
+    }
 
     // class variables
     int MAX_POINTERS = 5;
@@ -70,14 +76,16 @@ public class Synth {
 
 
 
-    public Synth(int xres, int yres, Database db) {
+    public Synth(int xres, int yres) {
         this.xres = xres;
         this.yres = yres;
-        this.db = db;
+        this.db = Database.getInstance();
         Random phaseGen = new Random();
         for (int i = 0; i < MAX_POINTERS; i++) {
             //setOscPhase(i, phaseGen.nextDouble());
         }
+        
+        instance = this;
     }
 
     public void touchEvent(MotionEvent event) {
@@ -181,7 +189,7 @@ public class Synth {
         }
     }
 
-    private int[] getNoteFromXY(float x, float y) {
+    int[] getNoteFromXY(float x, float y) {
         int xSegmentRes = xres / xSegments;
         int xSegment = (int) Math.floor(x / xSegmentRes);
 
@@ -195,7 +203,7 @@ public class Synth {
         return new int[]{noteIndex, octave};
     }
 
-    private double getNoteFrequency(int[] note) {
+    double getNoteFrequency(int[] note) {
         int noteIndex = note[0];
         int octave = note[1];
 

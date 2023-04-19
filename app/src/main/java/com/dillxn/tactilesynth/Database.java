@@ -14,6 +14,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+Database - This is a JSON based database that has the ability to persist between sessions.
+ */
 
 public class Database {
     private static Database instance;
@@ -38,6 +41,7 @@ public class Database {
         }
         return instance;
     }
+
 
     public Database(Context context) {
         // load custom db from internal storage

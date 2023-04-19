@@ -15,8 +15,8 @@ std::mutex recordedDataMutex;
 bool _recording = false;
 
 void startRecord() {
-    _recording = true;
     recordedData.clear();
+    _recording = true;
 }
 void stopRecord() {
     _recording = false;
