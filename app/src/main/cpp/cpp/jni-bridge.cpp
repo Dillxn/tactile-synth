@@ -82,3 +82,13 @@ JNIEXPORT void JNICALL
 Java_com_dillxn_tactilesynth_Synth_setFilter(JNIEnv *env, jobject thiz, jdouble amount) {
     audioEngine->setFilter(amount);
 }
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dillxn_tactilesynth_Synth_setDelay(JNIEnv *env, jobject thiz, jdouble amount) {
+    audioEngine->setDelay(amount);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dillxn_tactilesynth_Synth_setTremolo(JNIEnv *env, jobject thiz, jdouble amount) {
+    audioEngine->setTremolo(amount);
+}

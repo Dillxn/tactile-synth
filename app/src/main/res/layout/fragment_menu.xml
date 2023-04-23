@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menuLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/menu_bg"
+    android:orientation="vertical"
+    tools:context=".MenuFragment">
+
+
+
+    <LinearLayout
+        android:id="@+id/menuButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false">
+
+        <Button
+            android:id="@+id/tuningBtn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Tuning"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/effectsBtn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Effects"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/recordingBtn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Recording"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/settingsBtn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Settings"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/settings_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:background="@drawable/bg_tuning_round"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/debug"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:paddingVertical="20dp"
+            android:text="Debug Disabled" />
+
+        <Button
+            android:id="@+id/grid"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:paddingVertical="20dp"
+            android:text="Grid Disabled" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tuning_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/scaleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:text="Scale"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/scaleSpinner"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Spinner
+                    android:id="@+id/keySpinner"
+                    style="@android:style/Widget.DeviceDefault.Spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/bg_spinner_round"
+                    android:dropDownWidth="match_parent"
+                    android:dropDownVerticalOffset="45dp"
+                    android:minWidth="12dp"
+                    android:minHeight="12dp"
+                    android:popupBackground="@drawable/bg_spinner_round"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/keyText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:text="Key"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/keySpinner"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Spinner
+                    android:id="@+id/scaleSpinner"
+                    style="@android:style/Widget.DeviceDefault.Spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:background="@drawable/bg_spinner_round"
+                    android:dropDownWidth="match_parent"
+                    android:dropDownVerticalOffset="45dp"
+                    android:minWidth="12dp"
+                    android:minHeight="12dp"
+                    android:popupBackground="@drawable/bg_spinner_round"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline2"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="206dp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/bg_tuning_round"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+                tools:layout_editor_absoluteX="3dp">
+
+                <TextView
+                    android:id="@+id/tuningMenu_freqText6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="35dp"
+                    android:text="65.41hz"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tuningMenu_freqBar6"
+                    app:layout_constraintEnd_toStartOf="@+id/tuningMenu_freqBar6"
+                    app:layout_constraintTop_toTopOf="@+id/tuningMenu_freqBar6" />
+
+                <TextView
+                    android:id="@+id/tuningMenu_freqText7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="35dp"
+                    android:text="65.41hz"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tuningMenu_freqBar7"
+                    app:layout_constraintEnd_toStartOf="@+id/tuningMenu_freqBar7"
+                    app:layout_constraintTop_toTopOf="@+id/tuningMenu_freqBar7" />
+
+                <SeekBar
+                    android:id="@+id/tuningMenu_freqBar1"
+                    android:layout_width="235dp"
+                    android:layout_height="12dp"
+                    android:layout_marginEnd="30dp"
+                    android:max="6000"
+                    android:min="1000"
+                    android:paddingStart="10dip"
+                    android:paddingEnd="10dip"
+                    android:progress="2500"
+                    android:progressBackgroundTint="#FFFFFF"
+                    android:progressTint="#00FFFFFF"
+                    android:scaleX="1"
+                    android:scaleY="1"
+                    android:thumbTint="#FFFEFE"
+                    app:layout_constraintBottom_toTopOf="@+id/tuningMenu_freqBar2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <SeekBar
+                    android:id="@+id/tuningMenu_freqBar5"
+                    android:layout_width="235dp"
+                    android:layout_height="12dp"
+                    android:layout_marginEnd="30dp"
+                    android:max="6000"
+                    android:min="1000"
+                    android:paddingStart="10dip"
+                    android:paddingEnd="10dip"
+                    android:progress="2500"
+                    android:progressBackgroundTint="#FFFFFF"
+                    android:progressTint="#00FFFFFF"
+                    android:scaleX="1"
+                    android:scaleY="1"
+                    android:thumbTint="#FFFEFE"
+                    app:layout_constraintBottom_toTopOf="@+id/tuningMenu_freqBar6"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tuningMenu_freqBar4" />
+
+                <SeekBar
+                    android:id="@+id/tuningMenu_freqBar2"
+                    android:layout_width="235dp"
+                    android:layout_height="12dp"
+                    android:layout_marginEnd="30dp"
+                    android:max="6000"
+                    android:min="1000"
+                    android:paddingStart="10dip"
+                    android:paddingEnd="10dip"
+                    android:progress="2500"
+                    android:progressBackgroundTint="#FFFFFF"
+                    android:progressTint="#00FFFFFF"
+                    android:scaleX="1"
+                    android:scaleY="1"
+                    android:thumbTint="#FFFEFE"
+                    app:layout_constraintBottom_toTopOf="@+id/tuningMenu_freqBar3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tuningMenu_freqBar1" />
+
+                <SeekBar
+                    android:id="@+id/tuningMenu_freqBar7"
+                    android:layout_width="235dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="30dp"
+                    android:max="6000"
+                    android:min="1000"
+                    android:paddingStart="10dip"
+                    android:paddingEnd="10dip"
+                    android:progress="2500"
+                    android:progressBackgroundTint="#FFFFFF"
+                    android:progressTint="#00FFFFFF"
+                    android:scaleX="1"
+                    android:scaleY="1"
+                    android:thumbTint="#FFFEFE"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tuningMenu_freqBar6" />
+
+                <TextView
+                    android:id="@+id/tuningMenu_freqText3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="35dp"
+                    android:text="49hz"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tuningMenu_freqBar3"
+                    app:layout_constraintEnd_toStartOf="@+id/tuningMenu_freqBar3"
+                    app:layout_constraintTop_toTopOf="@+id/tuningMenu_freqBar3" />
+
+                <TextView
+                    android:id="@+id/tuningMenu_freqText4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="35dp"
+                    android:text="51.91hz"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tuningMenu_freqBar4"
+                    app:layout_constraintEnd_toStartOf="@+id/tuningMenu_freqBar4"
+                    app:layout_constraintTop_toTopOf="@+id/tuningMenu_freqBar4" />
+
+                <SeekBar
+                    android:id="@+id/tuningMenu_freqBar4"
+                    android:layout_width="235dp"
+                    android:layout_height="12dp"
+                    android:layout_marginEnd="30dp"
+                    android:max="6000"
+                    android:min="1000"
+                    android:paddingStart="10dip"
+                    android:paddingEnd="10dip"
+                    android:progress="2500"
+                    android:progressBackgroundTint="#FFFFFF"
+                    android:progressTint="#00FFFFFF"
+                    android:scaleX="1"
+                    android:scaleY="1"
+                    android:thumbTint="#FFFEFE"
+                    app:layout_constraintBottom_toTopOf="@+id/tuningMenu_freqBar5"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tuningMenu_freqBar3" />
+
+                <SeekBar
+                    android:id="@+id/tuningMenu_freqBar6"
+                    android:layout_width="235dp"
+                    android:layout_height="12dp"
+                    android:layout_marginEnd="30dp"
+                    android:max="6000"
+                    android:min="1000"
+                    android:paddingStart="10dip"
+                    android:paddingEnd="10dip"
+                    android:progress="2500"
+                    android:progressBackgroundTint="#FFFFFF"
+                    android:progressTint="#00FFFFFF"
+                    android:scaleX="1"
+                    android:scaleY="1"
+                    android:thumbTint="#FFFEFE"
+                    app:layout_constraintBottom_toTopOf="@+id/tuningMenu_freqBar7"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tuningMenu_freqBar5" />
+
+                <SeekBar
+                    android:id="@+id/tuningMenu_freqBar3"
+                    android:layout_width="235dp"
+                    android:layout_height="12dp"
+                    android:layout_marginEnd="30dp"
+                    android:max="6000"
+                    android:min="1000"
+                    android:paddingStart="10dip"
+                    android:paddingEnd="10dip"
+                    android:progress="2500"
+                    android:progressBackgroundTint="#FFFFFF"
+                    android:progressTint="#00FFFFFF"
+                    android:scaleX="1"
+                    android:scaleY="1"
+                    android:thumbTint="#FFFEFE"
+                    app:layout_constraintBottom_toTopOf="@+id/tuningMenu_freqBar4"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tuningMenu_freqBar2" />
+
+                <TextView
+                    android:id="@+id/tuningMenu_freqText5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="35dp"
+                    android:text="58.27hz"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tuningMenu_freqBar5"
+                    app:layout_constraintEnd_toStartOf="@+id/tuningMenu_freqBar5"
+                    app:layout_constraintTop_toTopOf="@+id/tuningMenu_freqBar5" />
+
+                <TextView
+                    android:id="@+id/tuningMenu_freqText2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="35dp"
+                    android:text="43.65hz"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tuningMenu_freqBar2"
+                    app:layout_constraintEnd_toStartOf="@+id/tuningMenu_freqBar2"
+                    app:layout_constraintTop_toTopOf="@+id/tuningMenu_freqBar2" />
+
+                <TextView
+                    android:id="@+id/tuningMenu_freqText1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="35dp"
+                    android:text="38.89hz"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tuningMenu_freqBar1"
+                    app:layout_constraintEnd_toStartOf="@+id/tuningMenu_freqBar1"
+                    app:layout_constraintTop_toTopOf="@+id/tuningMenu_freqBar1" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/effects_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <com.dillxn.tactilesynth.EffectsMenuView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/recording_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:background="@drawable/bg_tuning_round"
+            android:orientation="vertical">
+
+            <com.dillxn.tactilesynth.RecordingsMenuView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

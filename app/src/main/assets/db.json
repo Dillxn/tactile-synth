@@ -1,0 +1,72 @@
+{
+  "config": {
+    "preset": 0
+  },
+  "scales": [
+    {
+      "name": "major",
+      "frequencies": [
+        16.35,
+        18.35,
+        20.60,
+        21.83,
+        24.50,
+        27.50,
+        30.87
+      ]
+    },
+    {
+      "name": "minor",
+      "frequencies": [
+        16.35,
+        18.35,
+        19.45,
+        21.83,
+        24.50,
+        25.96,
+        29.14
+      ]
+    }
+  ],
+  "keys": [
+    "c",
+    "c# / db",
+    "d",
+    "d# / eb",
+    "e",
+    "f",
+    "f# / gb",
+    "g",
+    "g# / ab",
+    "a",
+    "a# / bb",
+    "b"
+  ],
+  "presets": [
+    {
+      "id": 0,
+      "name": "Default Preset",
+      "frequencies": [
+        16.35,
+        18.35,
+        20.6,
+        21.83,
+        24.5,
+        27.5,
+        30.87
+      ],
+      "sensorEffects": {
+        "gyroscope": {
+          "x": ["voices"],
+          "y": ["reverb", "delay"],
+          "z": ["filter", "tremolo"]
+        }
+      },
+      "gridState": false,
+      "debugState": false,
+      "bpm": 140,
+      "barsLength": 4
+    }
+  ],
+  "effects": [ "reverb", "filter", "voices", "delay", "tremolo" ]
+}

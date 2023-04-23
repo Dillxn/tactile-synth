@@ -1,48 +1,50 @@
 package com.dillxn.tactilesynth;
 
+import static android.app.PendingIntent.getActivity;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.ListFragment;
 
 import android.app.Activity;
-import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.WindowManager;
-import android.widget.TextView;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.VideoView;
 
-import java.text.DecimalFormat;
-
-
-public class MainActivity extends Activity implements SensorEventListener {
+public class MainActivity extends FragmentActivity {
 
     // Used to load the 'tactilesynth' library on application startup.
     static {
         System.loadLibrary("tactilesynth");
     }
+    
     private native void startEngine();
+    
     private native void stopEngine();
-
-    Synth synth;
-
-    // class variables
-    private SensorManager sensorManager;
-    private final float[] rotationVector = new float[3];
-    private final float[] accelerometerReading = new float[3];
-    private final float[] magnetometerReading = new float[3];
-    private final float[] rotationMatrix = new float[9];
-    private final float[] orientationAngles = new float[3];
+    
+    
+    FragmentManager fragmentManager = getSupportFragmentManager();
 
     VideoView background;
 
-    TextView textView;
+    Button menuButton;
+
+    public static PlaybackHandler playback;
+
+    Database db;
+    Synth synth;
+    boolean menu = false;
+
     float maxX = 0;
     float maxY = 0;
     float maxZ = 0;
@@ -50,23 +52,8 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = Database.getInstance(this);
 
-        // set up UI
-        setContentView(R.layout.activity_main);
-        // make fullscreen
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_main);
-        // prepare background
-        background = findViewById(R.id.background);
-        Uri bgUri = Uri.parse("android.resource://"+getPackageName()
-                +"/" + R.raw.background);
-        background.setVideoURI(bgUri);
-        background.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mediaPlayer) {
-                mediaPlayer.setLooping(true);
-            }
-        });
 
         // get display res
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -75,101 +62,75 @@ public class MainActivity extends Activity implements SensorEventListener {
         int yres = displayMetrics.heightPixels;
 
         // Init synth
-        this.synth = new Synth(xres, yres);
+        synth = new Synth(xres, yres);
 
-        // start sensor listening
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-
-
-        // start audio engine
         startEngine();
-    }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        // forward touch events to synth
-        synth.touchEvent(event);
-        return true;
-    }
 
-    protected void onResume() {
-        super.onResume();
-
-        // start background
+        playback = new PlaybackHandler(getApplicationContext().getFilesDir());
+        
+        
+        // make fullscreen
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.activity_main);
+        // prepare background
+        background = findViewById(R.id.background);
+        Uri bgUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.background);
+        background.setVideoURI(bgUri);
         background.start();
 
-        // register sensor listeners
-        Sensor rotationVectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
-        if (rotationVectorSensor != null) {
-            sensorManager.registerListener(this, rotationVectorSensor,
-                    SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
-        }
-        Sensor accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        if (accelerometerSensor != null) {
-            sensorManager.registerListener(this, accelerometerSensor,
-                    SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
-        }
-        Sensor magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        if (magneticFieldSensor != null) {
-            sensorManager.registerListener(this, magneticFieldSensor,
-                    SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
-        }
+        background.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                mediaPlayer.setLooping(true);
+            }
+        });
+
+
+
+        fragmentManager.beginTransaction().replace(R.id.fragmentContainerView, SynthFragment.class, null, "synthPrime")
+                .commit();
     }
 
-    protected void onPause() {
-        super.onPause();
-        sensorManager.unregisterListener(this);
+    /* JOSH - ENABLES AND DISABLES THE DEBUG UI */
+    public void menuToggle(View layout) {
+        FragmentTransaction fTransaction = fragmentManager.beginTransaction();
+        Fragment synthFragment = fragmentManager.findFragmentByTag("synthPrime");
+        Fragment menuFragment = (MenuFragment) fragmentManager.findFragmentByTag("optionsPrime");
+        if (menuFragment != null) {
+            ((MenuFragment) menuFragment).updateRecordings(playback.recordings);
+        }
+
+        if (!menu) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, MenuFragment.class, null, "optionsPrime")
+                    .setReorderingAllowed(true)
+                    .addToBackStack("name")
+                    .commit();
+            menu = !menu;
+        } else {
+            if (synthFragment == null) {
+                fTransaction.replace(R.id.fragmentContainerView, SynthFragment.class, null, "synthPrime").commit();
+                menu = !menu;
+            } else {
+                fTransaction.replace(R.id.fragmentContainerView, synthFragment, "synthPrime").commit();
+                menu = !menu;
+            }
+        }
     }
 
     @Override
-    public void onSensorChanged(SensorEvent event) {
-        Sensor sensor = event.sensor;
-        switch (sensor.getType()) {
-            case Sensor.TYPE_GAME_ROTATION_VECTOR: {
-                updateOrientationAngles();
-                float x = (float) (orientationAngles[0] / Math.PI);
-                float y = (float) (orientationAngles[1] * 2 / Math.PI);
-                float z = (float) (orientationAngles[2] / Math.PI);
-                if (x > maxX) maxX = x;
-                if (y > maxY) maxY = y;
-                if (z > maxZ) maxZ = z;
-                synth.rotation(x, y, z);
-
-                break;
-            }
-            case Sensor.TYPE_ACCELEROMETER: {
-                System.arraycopy(event.values, 0, accelerometerReading,
-                        0, accelerometerReading.length);
-                break;
-            }
-            case Sensor.TYPE_MAGNETIC_FIELD: {
-                System.arraycopy(event.values, 0, magnetometerReading,
-                        0, magnetometerReading.length);
-                break;
-            }
-        }
+    public void onResume() {
+        super.onResume();
+        background = findViewById(R.id.background);
+        Uri bgUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.background);
+        background.setVideoURI(bgUri);
+        background.start();
     }
-
-    // compute the three orientation angles based on the most recent
-    // readings from the device's accelerometer and magnetometer.
-    public void updateOrientationAngles() {
-        // update rotation matrix
-        SensorManager.getRotationMatrix(rotationMatrix, null,
-                accelerometerReading, magnetometerReading);
-        // local coordinates
-        //SensorManager.remapCoordinateSystem(rotationMatrix, SensorManager.AXIS_X, )
-        // use matrix to get orientation angles
-        SensorManager.getOrientation(rotationMatrix, orientationAngles);
-    }
-
+    
     @Override
     public void onDestroy() {
-        stopEngine();
         super.onDestroy();
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-
+        stopEngine();
     }
 }

@@ -1,26 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#2D2F31"
+    android:backgroundTint="#2D2F31"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <VideoView
-        android:id="@+id/background"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/constraintLayout"/>
+        android:layout_height="50dp">
+
+        <com.dillxn.tactilesynth.RecordPlayButtons
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
+
+        <ImageButton
+            android:id="@+id/menuToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:backgroundTint="#00FFFFFF"
+            android:onClick="menuToggle"
+            android:scaleType="centerCrop"
+            android:src="@drawable/charm"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias=".5" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/fragFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <VideoView
+            android:id="@+id/background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/fragFrame"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true" />
 
         <ImageView
             android:id="@+id/logo"
@@ -32,9 +62,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.dillxn.tactilesynth.Touchpad
-            android:id="@+id/touchpad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentContainerView"
+            android:name="com.dillxn.tactilesynth.MenuFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5"
+            tools:layout="@layout/fragment_synth" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
-</RelativeLayout>
+
+</LinearLayout>

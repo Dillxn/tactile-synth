@@ -1,18 +1,45 @@
-//
-// Created by Dillon on 4/23/2022.
-//
-
 #include <android/log.h>
 #include "AudioEngine.h"
 #include <thread>
 #include <mutex>
+#include <jni.h>
+
 
 // double-buffering offers a good tradeoff
 // between latency and protection against glitches
 constexpr int32_t kBufferSizeInBursts = 4;
 
+std::vector<float> recordedData;
+std::mutex recordedDataMutex;
+
+bool _recording = false;
+
+void startRecord() {
+    recordedData.clear();
+    _recording = true;
+}
+void stopRecord() {
+    _recording = false;
+}
+
+int _sampleRate;
+int _bufferSize;
+
+// this is called as a step in creating the audio stream
+// giving us audioData, a hook into the audio stream raw data
 aaudio_data_callback_result_t dataCallback(AAudioStream *stream, void *userData, void *audioData, int32_t numFrames) {
-    ((AudioMutator * ) (userData))->mutate(audioData, numFrames);
+    // first we call 'generate' which renders the oscillators
+    // and mutates it with effects
+    ((AudioGenerator *) (userData))->generate(audioData, numFrames);
+
+    if (_recording) {
+        // Record the generated audio data to the global recordedData vector.
+        size_t numBytes = numFrames * sizeof(float);
+        float *dataFloats = static_cast<float *>(audioData);
+        std::lock_guard<std::mutex> lock(recordedDataMutex);
+        recordedData.insert(recordedData.end(), dataFloats, dataFloats + numFrames);
+    }
+
     return AAUDIO_CALLBACK_RESULT_CONTINUE;
 }
 
@@ -36,7 +63,7 @@ bool AudioEngine::start() {
     AAudioStreamBuilder_setPerformanceMode(streamBuilder,
                                            AAUDIO_PERFORMANCE_MODE_LOW_LATENCY);
     AAudioStreamBuilder_setDataCallback(streamBuilder,
-                                        ::dataCallback, &audioMutator);
+                                        ::dataCallback, &audioGenerator);
     AAudioStreamBuilder_setErrorCallback(streamBuilder,
                                          ::errorCallback, this);
 
@@ -52,11 +79,14 @@ bool AudioEngine::start() {
 
     // retrieve sample rate of stream for osc
     int32_t sampleRate = AAudioStream_getSampleRate(stream_);
-    audioMutator.setSampleRate(sampleRate);
+    audioGenerator.setSampleRate(sampleRate);
+    _sampleRate = sampleRate;
 
     // set buffer size
+    int32_t bufferSize = AAudioStream_getFramesPerBurst(stream_) * kBufferSizeInBursts;
     AAudioStream_setBufferSizeInFrames(
-            stream_, AAudioStream_getFramesPerBurst(stream_) * kBufferSizeInBursts);
+            stream_, bufferSize);
+    _bufferSize = bufferSize;
 
     // start the stream
     result = AAudioStream_requestStart(stream_);
@@ -89,49 +119,124 @@ void AudioEngine::stop() {
 }
 
 void AudioEngine::toggleOsc(int oscId, bool isToneOn) {
-    audioMutator.toggleOsc(oscId, isToneOn);
+    audioGenerator.toggleOsc(oscId, isToneOn);
 }
 
 void AudioEngine::setOscFrequency(int oscId, double frequency) {
-    audioMutator.setOscFrequency(oscId, frequency);
+    audioGenerator.setOscFrequency(oscId, frequency);
 }
 
 void AudioEngine::setOscPhase(int oscId, double offset) {
-    audioMutator.setOscPhase(oscId, offset);
+    audioGenerator.setOscPhase(oscId, offset);
 }
 
 bool AudioEngine::isOscDown(int oscId) {
-    return audioMutator.isOscDown(oscId);
+    return audioGenerator.isOscDown(oscId);
 }
 
 void AudioEngine::setOscVoices(int oscId, int voices) {
-    audioMutator.setOscVoices(oscId, voices);
+    audioGenerator.setOscVoices(oscId, voices);
 }
 
 void AudioEngine::setOscSpread(int oscId, double spread) {
-    audioMutator.setOscSpread(oscId, spread);
+    audioGenerator.setOscSpread(oscId, spread);
 }
 
 void AudioEngine::setReverb(double reverb) {
-    audioMutator.setReverb(reverb);
+    audioGenerator.setReverb(reverb);
 }
 
 void AudioEngine::setOscVoicesVolume(int oscId, double volume) {
-    audioMutator.setOscVoicesVolume(oscId, volume);
+    audioGenerator.setOscVoicesVolume(oscId, volume);
 }
 
 void AudioEngine::setOscVolume(int oscId, double volume) {
-    audioMutator.setOscVolume(oscId, volume);
+    audioGenerator.setOscVolume(oscId, volume);
 }
 
 void AudioEngine::setOscAttack(int oscId, double amount) {
-    audioMutator.setOscAttack(oscId, amount);
+    audioGenerator.setOscAttack(oscId, amount);
 }
 
 void AudioEngine::setBitCrush(double amount) {
-    audioMutator.setBitCrush(amount);
+    audioGenerator.setBitCrush(amount);
 }
 
 void AudioEngine::setFilter(double amount) {
-    audioMutator.setFilter(amount);
+    audioGenerator.setFilter(amount);
+}
+
+void AudioEngine::setDelay(double amount) {
+    audioGenerator.setDelay(amount);
+}
+
+void AudioEngine::setTremolo(double amount) {
+    audioGenerator.setTremoloAmount((float) amount);
+}
+
+// starts collecting generated audio data
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dillxn_tactilesynth_Synth_startRecord(JNIEnv *env, jobject thiz) {
+    startRecord();
+}
+
+// stops the engine from recording
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dillxn_tactilesynth_Synth_stopRecord(JNIEnv *env, jobject thiz) {
+    stopRecord();
+}
+
+// returns a float array containing the currently stored recorded data
+extern "C"
+JNIEXPORT jfloatArray JNICALL
+Java_com_dillxn_tactilesynth_Synth_getRecordedAudioData(JNIEnv *env, jobject thiz) {
+
+    _jfloatArray *audioDataArray = env->NewFloatArray(recordedData.size());
+    env->SetFloatArrayRegion(audioDataArray, 0, recordedData.size(), (const jfloat*)recordedData.data());
+
+    return audioDataArray;
+}
+
+// returns sample rate
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_dillxn_tactilesynth_Synth_getSampleRate(JNIEnv *env, jobject thiz) {
+    return _sampleRate;
+}
+
+// returns buffer size
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_dillxn_tactilesynth_Synth_getBufferSize(JNIEnv *env, jobject thiz) {
+    return _bufferSize;
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dillxn_tactilesynth_PlaybackHandler_startRecord(JNIEnv *env, jobject thiz) {
+    startRecord();
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dillxn_tactilesynth_PlaybackHandler_stopRecord(JNIEnv *env, jobject thiz) {
+    stopRecord();
+}
+extern "C"
+JNIEXPORT jfloatArray JNICALL
+Java_com_dillxn_tactilesynth_PlaybackHandler_getRecordedAudioData(JNIEnv *env, jobject thiz) {
+    _jfloatArray *audioDataArray = env->NewFloatArray(recordedData.size());
+    env->SetFloatArrayRegion(audioDataArray, 0, recordedData.size(), (const jfloat*)recordedData.data());
+
+    return audioDataArray;
+}
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_dillxn_tactilesynth_PlaybackHandler_getSampleRate(JNIEnv *env, jobject thiz) {
+    return _sampleRate;
+}
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_dillxn_tactilesynth_PlaybackHandler_getBufferSize(JNIEnv *env, jobject thiz) {
+    return _bufferSize;
 }

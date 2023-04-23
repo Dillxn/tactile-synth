@@ -1,21 +1,20 @@
-//
-// Created by Dillon on 4/24/2022.
-//
-
-#ifndef TACTILESYNTH_AUDIOMUTATOR_H
-#define TACTILESYNTH_AUDIOMUTATOR_H
+#ifndef TACTILESYNTH_AUDIOGENERATOR_H
+#define TACTILESYNTH_AUDIOGENERATOR_H
 
 #define MAX_OSCILLATORS 5
 #define MAX_FREQUENCY 20000
 
 #include "Osc.h"
 #include "MVerb.h"
+#include <vector>
+#include <cmath>
 
-class AudioMutator {
+class AudioGenerator
+{
 public:
-    AudioMutator();
+    AudioGenerator();
 
-    void mutate(void *audioData, int32_t numFrames);
+    void generate(void *audioData, int32_t numFrames);
 
     void toggleOsc(int oscId, bool isToneOn);
 
@@ -43,6 +42,10 @@ public:
 
     void setFilter(double amount);
 
+    void setDelay(double amount);
+
+    void setTremoloAmount(float amount);
+
 private:
     Osc oscillators_[MAX_OSCILLATORS];
     int oscCount_;
@@ -61,7 +64,18 @@ private:
     double clipperThreshold_ = .5;
     float lowPassAmount_ = 0;
     float highPassAmount_ = 0;
+
+    double delayAmount_ = 0;
+
+    int32_t sampleRate_ = 0;
+
+    std::vector<float> delayBuffer_;
+    int delayBufferSize_;
+    int delayWritePos_;
+    int delayReadPos_;
+    int delayTime_;
+    float tremoloAmount_;
+    float tremoloPhase_;
 };
 
-
-#endif //TACTILESYNTH_AUDIOMUTATOR_H
+#endif // TACTILESYNTH_AUDIOGENERATOR_H
