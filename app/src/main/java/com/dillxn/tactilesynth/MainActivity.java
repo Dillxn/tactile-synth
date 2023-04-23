@@ -62,7 +62,7 @@ public class MainActivity extends FragmentActivity {
         int yres = displayMetrics.heightPixels;
 
         // Init synth
-        synth = new Synth(xres, yres, db);
+        synth = new Synth(xres, yres);
 
         startEngine();
 

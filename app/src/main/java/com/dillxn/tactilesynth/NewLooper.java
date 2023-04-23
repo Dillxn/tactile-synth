@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Looper {
+public class NewLooper {
 
-	private static Looper instance;
+	private static NewLooper instance;
 	private List<ProgressListener> progressListeners;
 
-	public static synchronized Looper getInstance(LoopTimelineView loopTimelineView) {
+	public static synchronized NewLooper getInstance(LoopTimelineView loopTimelineView) {
 		if (instance == null) {
-			instance = new Looper(loopTimelineView);
+			instance = new NewLooper(loopTimelineView);
 		}
 		return instance;
 	}
@@ -33,11 +33,9 @@ public class Looper {
 	}
 
 	private void notifyProgressListeners(float progress) {
-		uiHandler.post(() -> {
-			for (ProgressListener listener : progressListeners) {
-				listener.onProgressUpdate(progress);
-			}
-		});
+		for (ProgressListener listener : progressListeners) {
+			listener.onProgressUpdate(progress);
+		}
 	}
 
 	private int barsLength;
@@ -46,28 +44,27 @@ public class Looper {
 	//private Handler loopHandler;
 	private Timer loopTimer;
 	private TimerTask loopTimerTask;
+	private Runnable loopRunnable;
+
 	private LoopTimelineView loopTimelineView;
 	private long startTime;
 	private int beatCount = 0;
 
-	private Handler uiHandler;
-
-	public Looper(LoopTimelineView loopTimelineView) {
+	public NewLooper(LoopTimelineView loopTimelineView) {
 		barsLength = Database.getInstance().getPreset().optInt("barsLength");
 		playback = PlaybackHandler.getInstance();
-
+		//loopHandler = new Handler();
 		loopTimer = new Timer();
 		calculateLoopInterval();
 		this.loopTimelineView = loopTimelineView;
 		progressListeners = new ArrayList<>();
-		uiHandler = new Handler(android.os.Looper.getMainLooper());
 	}
 
 	private void calculateLoopInterval() {
 		loopInterval = (long) (Metronome.getInstance().getBeatInterval() * 4 * barsLength);
 	}
 
-	public void startLoop(boolean shouldRecord) {
+	public void startLoop(boolean shouldRecord, boolean metronomeEnabled) {
 		beatCount = 0;
 		startTime = System.currentTimeMillis();
 
@@ -92,13 +89,13 @@ public class Looper {
 						playback.startRecording();
 					}
 
-					//playback.stopSelected();
+					playback.stopSelected();
 					playback.playSelected();
 				}
 
 				// Play metronome sound
 				boolean isDownBeat = beatCount % 4 == 0;
-				if (RecordPlayButtons.getInstance().isMetronomePlaying)
+				if (metronomeEnabled)
 					Metronome.getInstance().playSound(isDownBeat);
 
 				// notify progress listeners

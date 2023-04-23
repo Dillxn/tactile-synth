@@ -9,7 +9,9 @@
         android:id="@+id/effect_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Effect Name" />
+        android:buttonTint="#FF03dac5"
+        android:text="Effect Name"
+        android:textColor="@android:color/white" />
 
     <LinearLayout
         android:id="@+id/effect_params_container"
